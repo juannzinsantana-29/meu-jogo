@@ -22,7 +22,6 @@ body {
 
 h1 {
     color: #f5d76e;
-    margin: 10px 0 15px;
 }
 
 #game {
@@ -31,7 +30,7 @@ h1 {
     max-width: 95vw;
     height: min(550px, 85vh);
     min-height: 400px;
-    margin: 0 auto;
+    margin: auto;
     overflow: hidden;
     background: #6b8e23;
     border: 4px solid #3c5220;
@@ -62,9 +61,9 @@ h1 {
 
 .tree {
     position: absolute;
-    font-size: 42px;
     width: 50px;
     height: 50px;
+    font-size: 42px;
     z-index: 4;
 }
 
@@ -85,9 +84,9 @@ h1 {
 
 .rock {
     position: absolute;
-    font-size: 32px;
     width: 40px;
     height: 40px;
+    font-size: 32px;
     z-index: 4;
 }
 
@@ -103,12 +102,12 @@ h1 {
 
 .coin {
     position: absolute;
-    font-size: 28px;
     width: 32px;
     height: 32px;
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 28px;
     z-index: 3;
 }
 
@@ -152,7 +151,7 @@ h1 {
     top: 10px;
     left: 10px;
     padding: 8px 12px;
-    background: rgba(0, 0, 0, 0.7);
+    background: rgba(0, 0, 0, 0.75);
     border-radius: 8px;
     text-align: left;
     line-height: 1.6;
@@ -216,14 +215,14 @@ h1 {
     <div class="path"></div>
     <div class="lake"></div>
 
-    <!-- Moedas para coletar -->
+    <!-- Moedas -->
     <div class="coin coin1">🪙</div>
     <div class="coin coin2">🪙</div>
     <div class="coin coin3">🪙</div>
     <div class="coin coin4">🪙</div>
     <div class="coin coin5">🪙</div>
 
-    <!-- Árvores e pedras -->
+    <!-- Obstáculos -->
     <div class="obstacle tree tree1">🌳</div>
     <div class="obstacle tree tree2">🌳</div>
     <div class="obstacle tree tree3">🌳</div>
@@ -231,32 +230,33 @@ h1 {
     <div class="obstacle rock rock1">🪨</div>
     <div class="obstacle rock rock2">🪨</div>
 
-    <!-- Informações do jogador -->
+    <!-- Painel de informações -->
     <div id="hud">
         ❤️ Vida: 100<br>
         ⭐ Moedas: <span id="coinCount">0</span>
     </div>
 
-    <!-- Personagem -->
+    <!-- Jogador -->
     <div id="player"></div>
 
 </div>
 
-<!-- Controles para celular -->
+<!-- Botões de movimento -->
 <div id="controls">
-    <button id="up" aria-label="Mover para cima">⬆️</button>
-    <button id="left" aria-label="Mover para esquerda">⬅️</button>
-    <button id="down" aria-label="Mover para baixo">⬇️</button>
-    <button id="right" aria-label="Mover para direita">➡️</button>
+    <button id="up" aria-label="Cima">⬆️</button>
+    <button id="left" aria-label="Esquerda">⬅️</button>
+    <button id="down" aria-label="Baixo">⬇️</button>
+    <button id="right" aria-label="Direita">➡️</button>
 </div>
 
 <p class="instructions">
-    Use as setas do teclado ou WASD para se movimentar e coletar moedas.
+    Use as setas do teclado ou WASD para andar e coletar moedas!
 </p>
 
 <script>
 const player = document.getElementById("player");
 const game = document.getElementById("game");
+const coinElements = document.querySelectorAll(".coin");
 
 let x = game.clientWidth / 2 - 23;
 let y = game.clientHeight / 2 - 23;
@@ -264,17 +264,15 @@ let y = game.clientHeight / 2 - 23;
 const speed = 10;
 const playerSize = 46;
 
-// Sistema de moedas
 let coins = 0;
-const coinElements = document.querySelectorAll(".coin");
 
-// Desenha o personagem na posição atual
+// Desenha o jogador
 function drawPlayer() {
     player.style.left = x + "px";
     player.style.top = y + "px";
 }
 
-// Verifica se o personagem vai bater em um obstáculo
+// Verifica colisão com árvores e pedras
 function canMove(newX, newY) {
     const obstacles = document.querySelectorAll(".obstacle");
     const gameRect = game.getBoundingClientRect();
@@ -310,25 +308,41 @@ function canMove(newX, newY) {
     return true;
 }
 
-// Verifica se o personagem encostou em alguma moeda
+// Coleta moedas próximas do jogador
 function collectCoins() {
     const playerRect = player.getBoundingClientRect();
 
+    const playerCenterX =
+        playerRect.left + playerRect.width / 2;
+
+    const playerCenterY =
+        playerRect.top + playerRect.height / 2;
+
     coinElements.forEach(function(coin) {
-        if (coin.style.display === "none") {
+        if (coin.dataset.collected === "true") {
             return;
         }
 
         const coinRect = coin.getBoundingClientRect();
 
-        const touching =
-            playerRect.right > coinRect.left &&
-            playerRect.left < coinRect.right &&
-            playerRect.bottom > coinRect.top &&
-            playerRect.top < coinRect.bottom;
+        const coinCenterX =
+            coinRect.left + coinRect.width / 2;
 
-        if (touching) {
+        const coinCenterY =
+            coinRect.top + coinRect.height / 2;
+
+        const distanceX = playerCenterX - coinCenterX;
+        const distanceY = playerCenterY - coinCenterY;
+
+        const distance = Math.sqrt(
+            distanceX * distanceX +
+            distanceY * distanceY
+        );
+
+        if (distance < 40) {
+            coin.dataset.collected = "true";
             coin.style.display = "none";
+
             coins++;
 
             document.getElementById("coinCount").textContent = coins;
@@ -336,7 +350,7 @@ function collectCoins() {
     });
 }
 
-// Movimenta o personagem e impede que saia do mapa
+// Movimento do jogador
 function move(dx, dy) {
     const newX = Math.max(
         0,
@@ -359,14 +373,19 @@ function move(dx, dy) {
     collectCoins();
 }
 
-// Controles pelo teclado
+// Teclado: setas e WASD
 document.addEventListener("keydown", function(event) {
     const key = event.key.toLowerCase();
 
     const keys = [
-        "arrowup", "arrowdown",
-        "arrowleft", "arrowright",
-        "w", "a", "s", "d"
+        "arrowup",
+        "arrowdown",
+        "arrowleft",
+        "arrowright",
+        "w",
+        "a",
+        "s",
+        "d"
     ];
 
     if (keys.includes(key)) {
@@ -375,42 +394,36 @@ document.addEventListener("keydown", function(event) {
 
     if (key === "arrowup" || key === "w") {
         move(0, -speed);
-    }
-
-    if (key === "arrowdown" || key === "s") {
+    } else if (key === "arrowdown" || key === "s") {
         move(0, speed);
-    }
-
-    if (key === "arrowleft" || key === "a") {
+    } else if (key === "arrowleft" || key === "a") {
         move(-speed, 0);
-    }
-
-    if (key === "arrowright" || key === "d") {
+    } else if (key === "arrowright" || key === "d") {
         move(speed, 0);
     }
 });
 
-// Controles pelos botões
-document.getElementById("up").addEventListener(
-    "click", () => move(0, -speed)
-);
+// Botões de movimento
+document.getElementById("up").addEventListener("click", function() {
+    move(0, -speed);
+});
 
-document.getElementById("down").addEventListener(
-    "click", () => move(0, speed)
-);
+document.getElementById("down").addEventListener("click", function() {
+    move(0, speed);
+});
 
-document.getElementById("left").addEventListener(
-    "click", () => move(-speed, 0)
-);
+document.getElementById("left").addEventListener("click", function() {
+    move(-speed, 0);
+});
 
-document.getElementById("right").addEventListener(
-    "click", () => move(speed, 0)
-);
+document.getElementById("right").addEventListener("click", function() {
+    move(speed, 0);
+});
 
-// Posiciona o personagem quando o jogo começa
+// Inicia o jogo
 drawPlayer();
+collectCoins();
 </script>
 
 </body>
 </html>
-
