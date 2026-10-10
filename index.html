@@ -2,229 +2,228 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pixel Adventure</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pixel Adventure</title>
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+<style>
+* {
+    box-sizing: border-box;
+}
 
-        body {
-            margin: 0;
-            background: #171717;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            font-family: Arial, sans-serif;
-        }
+body {
+    margin: 0;
+    padding: 15px;
+    background: #202820;
+    color: white;
+    font-family: Arial, sans-serif;
+    text-align: center;
+}
 
-        #game {
-            width: 900px;
-            max-width: 95vw;
-            height: 550px;
-            height: min(550px, 85vh);
-            min-height: 400px;
-            background: #6b8e23;
-            border: 5px solid #222;
-            position: relative;
-            overflow: hidden;
-        }
+h1 {
+    color: #f5d76e;
+    margin: 10px 0 15px;
+}
 
-        /* CAMINHO */
-        .path {
-            position: absolute;
-            width: 100%;
-            height: 70px;
-            background: #c2a36b;
-            top: 45%;
-            left: 0;
-            z-index: 0;
-        }
+#game {
+    position: relative;
+    width: 900px;
+    max-width: 95vw;
+    height: min(550px, 85vh);
+    min-height: 400px;
+    margin: 0 auto;
+    overflow: hidden;
+    background: #6b8e23;
+    border: 4px solid #3c5220;
+    border-radius: 8px;
+}
 
-        /* LAGO */
-        .lake {
-            position: absolute;
-            width: 220px;
-            height: 130px;
-            background: #4da6d9;
-            border: 5px solid #3285b4;
-            border-radius: 50%;
-            left: 35px;
-            bottom: 35px;
-            z-index: 1;
-        }
+.path {
+    position: absolute;
+    left: 0;
+    top: 45%;
+    width: 100%;
+    height: 70px;
+    background: #c2a16a;
+    z-index: 1;
+}
 
-        /* ÁRVORES */
-        .tree {
-            position: absolute;
-            font-size: 45px;
-            z-index: 2;
-            line-height: 1.2;
-        }
+.lake {
+    position: absolute;
+    right: 8%;
+    top: 10%;
+    width: 160px;
+    height: 100px;
+    background: #3498db;
+    border: 5px solid #2471a3;
+    border-radius: 50%;
+    z-index: 2;
+}
 
-        .tree1 {
-            left: 80px;
-            top: 65px;
-        }
+.tree {
+    position: absolute;
+    font-size: 42px;
+    width: 50px;
+    height: 50px;
+    z-index: 4;
+}
 
-        .tree2 {
-            right: 100px;
-            top: 100px;
-        }
+.tree1 {
+    left: 10%;
+    top: 15%;
+}
 
-        .tree3 {
-            left: 300px;
-            bottom: 35px;
-        }
+.tree2 {
+    left: 25%;
+    bottom: 10%;
+}
 
-        /* PEDRAS */
-        .rock {
-            position: absolute;
-            font-size: 30px;
-            z-index: 2;
-            line-height: 1.2;
-        }
+.tree3 {
+    right: 20%;
+    bottom: 15%;
+}
 
-        .rock1 {
-            left: 350px;
-            top: 90px;
-        }
+.rock {
+    position: absolute;
+    font-size: 32px;
+    width: 40px;
+    height: 40px;
+    z-index: 4;
+}
 
-        .rock2 {
-            right: 250px;
-            bottom: 70px;
-        }
+.rock1 {
+    left: 42%;
+    top: 20%;
+}
 
-        /* PERSONAGEM */
-        #player {
-            width: 46px;
-            height: 46px;
-            background: #4b7bec;
-            border: 3px solid white;
-            border-radius: 8px;
-            position: absolute;
-            left: 0;
-            top: 0;
-            z-index: 5;
-        }
+.rock2 {
+    right: 35%;
+    bottom: 12%;
+}
 
-        #hud {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            color: white;
-            background: #222b;
-            padding: 10px;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: bold;
-            z-index: 10;
-        }
+.coin {
+    position: absolute;
+    font-size: 28px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 3;
+}
 
-        /* CONTROLES */
-        #controls {
-            position: absolute;
-            bottom: 12px;
-            left: 12px;
-            display: grid;
-            grid-template-columns: repeat(3, 48px);
-            grid-template-rows: repeat(2, 48px);
-            gap: 5px;
-            z-index: 20;
-        }
+.coin1 {
+    left: 150px;
+    top: 180px;
+}
 
-        button {
-            width: 48px;
-            height: 48px;
-            font-size: 20px;
-            border: 2px solid #ddd;
-            border-radius: 10px;
-            background: #333;
-            color: white;
-            cursor: pointer;
-            touch-action: manipulation;
-        }
+.coin2 {
+    left: 300px;
+    top: 300px;
+}
 
-        button:active {
-            background: #666;
-        }
+.coin3 {
+    right: 150px;
+    top: 220px;
+}
 
-        #up {
-            grid-column: 2;
-            grid-row: 1;
-        }
+.coin4 {
+    right: 300px;
+    top: 100px;
+}
 
-        #left {
-            grid-column: 1;
-            grid-row: 2;
-        }
+.coin5 {
+    left: 400px;
+    bottom: 60px;
+}
 
-        #down {
-            grid-column: 2;
-            grid-row: 2;
-        }
+#player {
+    position: absolute;
+    width: 46px;
+    height: 46px;
+    background: #3498db;
+    border: 3px solid #1b4f72;
+    border-radius: 8px;
+    z-index: 5;
+}
 
-        #right {
-            grid-column: 3;
-            grid-row: 2;
-        }
+#hud {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    padding: 8px 12px;
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 8px;
+    text-align: left;
+    line-height: 1.6;
+    z-index: 10;
+}
 
-        /* MOEDAS COLETÁVEIS */
-        .coin {
-            position: absolute;
-            font-size: 28px;
-            z-index: 3;
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+#controls {
+    display: grid;
+    grid-template-columns: repeat(3, 60px);
+    grid-template-rows: repeat(2, 55px);
+    justify-content: center;
+    gap: 5px;
+    margin: 15px auto;
+}
 
-        .coin1 {
-            left: 150px;
-            top: 180px;
-        }
+#controls button {
+    font-size: 24px;
+    border: none;
+    border-radius: 10px;
+    background: #f5d76e;
+    cursor: pointer;
+}
 
-        .coin2 {
-            left: 300px;
-            top: 300px;
-        }
+#controls button:active {
+    background: #e0b832;
+}
 
-        .coin3 {
-            right: 150px;
-            top: 220px;
-        }
+#up {
+    grid-column: 2;
+    grid-row: 1;
+}
 
-        .coin4 {
-            right: 300px;
-            top: 100px;
-        }
+#left {
+    grid-column: 1;
+    grid-row: 2;
+}
 
-        .coin5 {
-            left: 400px;
-            bottom: 60px;
-        }
-        
-    </style>
+#down {
+    grid-column: 2;
+    grid-row: 2;
+}
+
+#right {
+    grid-column: 3;
+    grid-row: 2;
+}
+
+.instructions {
+    color: #ddd;
+    font-size: 14px;
+}
+</style>
 </head>
 
 <body>
+
+<h1>🎮 Pixel Adventure</h1>
 
 <div id="game">
 
     <div class="path"></div>
     <div class="lake"></div>
 
+    <!-- Moedas para coletar -->
     <div class="coin coin1">🪙</div>
     <div class="coin coin2">🪙</div>
     <div class="coin coin3">🪙</div>
     <div class="coin coin4">🪙</div>
     <div class="coin coin5">🪙</div>
 
+    <!-- Árvores e pedras -->
     <div class="obstacle tree tree1">🌳</div>
     <div class="obstacle tree tree2">🌳</div>
     <div class="obstacle tree tree3">🌳</div>
@@ -232,183 +231,186 @@
     <div class="obstacle rock rock1">🪨</div>
     <div class="obstacle rock rock2">🪨</div>
 
+    <!-- Informações do jogador -->
     <div id="hud">
         ❤️ Vida: 100<br>
         ⭐ Moedas: <span id="coinCount">0</span>
     </div>
 
+    <!-- Personagem -->
     <div id="player"></div>
-
-    <div id="controls">
-        <button id="up" aria-label="Cima">⬆️</button>
-        <button id="left" aria-label="Esquerda">⬅️</button>
-        <button id="down" aria-label="Baixo">⬇️</button>
-        <button id="right" aria-label="Direita">➡️</button>
-    </div>
 
 </div>
 
+<!-- Controles para celular -->
+<div id="controls">
+    <button id="up" aria-label="Mover para cima">⬆️</button>
+    <button id="left" aria-label="Mover para esquerda">⬅️</button>
+    <button id="down" aria-label="Mover para baixo">⬇️</button>
+    <button id="right" aria-label="Mover para direita">➡️</button>
+</div>
+
+<p class="instructions">
+    Use as setas do teclado ou WASD para se movimentar e coletar moedas.
+</p>
+
 <script>
-    const player = document.getElementById("player");
-    const game = document.getElementById("game");
+const player = document.getElementById("player");
+const game = document.getElementById("game");
 
-    let x = game.clientWidth / 2 - 23;
-    let y = game.clientHeight / 2 - 23;
+let x = game.clientWidth / 2 - 23;
+let y = game.clientHeight / 2 - 23;
 
-    const speed = 10;
-    const playerSize = 46;
+const speed = 10;
+const playerSize = 46;
 
-    let coins = 0;
+// Sistema de moedas
+let coins = 0;
+const coinElements = document.querySelectorAll(".coin");
 
-    const coinElements = document.querySelectorAll(".coin");
+// Desenha o personagem na posição atual
+function drawPlayer() {
+    player.style.left = x + "px";
+    player.style.top = y + "px";
+}
 
-    function collectCoins() {
-        const playerRect = player.getBoundingClientRect();
-        
-        coinElements.forEach(function(coin) {
-            if (coin.style.display === "none") {
-                return;
-            }
-            
-            const coinRect = coin.getBoundingClientRect();
-            
-            const touching =
-                playerRect.right > coinRect.left &&
-                playerRect.left < coinRect.right &&
-                playerRect.bottom > coinRect.top &&
-                playerRect.top < coinRect.bottom;
+// Verifica se o personagem vai bater em um obstáculo
+function canMove(newX, newY) {
+    const obstacles = document.querySelectorAll(".obstacle");
+    const gameRect = game.getBoundingClientRect();
 
-            if (touching) {
-                coin.style.display = "none";
-                coins++;
+    const playerRect = {
+        left: newX,
+        right: newX + playerSize,
+        top: newY,
+        bottom: newY + playerSize
+    };
 
-                document.getElementById("coinCount").textContent = coins;
-            }
-        });
-    }
+    for (const obstacle of obstacles) {
+        const rect = obstacle.getBoundingClientRect();
 
-    // Coloca o personagem no centro do mapa
-    function drawPlayer() {
-        player.style.left = x + "px";
-        player.style.top = y + "px";
-    }
-
-    // Verifica se existe algum obstáculo na nova posição
-    function canMove(newX, newY) {
-        const obstacles =
-            document.querySelectorAll(".obstacle");
-
-        const gameRect = game.getBoundingClientRect();
-
-        const playerRect = {
-            left: newX,
-            right: newX + playerSize,
-            top: newY,
-            bottom: newY + playerSize
+        const obstacleRect = {
+            left: rect.left - gameRect.left - game.clientLeft,
+            right: rect.right - gameRect.left - game.clientLeft,
+            top: rect.top - gameRect.top - game.clientTop,
+            bottom: rect.bottom - gameRect.top - game.clientTop
         };
 
-        for (const obstacle of obstacles) {
-            const rect = obstacle.getBoundingClientRect();
+        const collision =
+            playerRect.right > obstacleRect.left &&
+            playerRect.left < obstacleRect.right &&
+            playerRect.bottom > obstacleRect.top &&
+            playerRect.top < obstacleRect.bottom;
 
-            const obstacleRect = {
-                left: rect.left - gameRect.left -
-                    game.clientLeft,
-                right: rect.right - gameRect.left -
-                    game.clientLeft,
-                top: rect.top - gameRect.top -
-                    game.clientTop,
-                bottom: rect.bottom - gameRect.top -
-                    game.clientTop
-            };
-
-            const collision =
-                playerRect.right > obstacleRect.left &&
-                playerRect.left < obstacleRect.right &&
-                playerRect.bottom > obstacleRect.top &&
-                playerRect.top < obstacleRect.bottom;
-
-            if (collision) {
-                return false;
-            }
+        if (collision) {
+            return false;
         }
-
-        return true;
     }
 
-    // Movimenta o personagem
-    function move(dx, dy) {
-        const newX = Math.max(
-            0,
-            Math.min(game.clientWidth - playerSize, x + dx)
-        );
+    return true;
+}
 
-        const newY = Math.max(
-            0,
-            Math.min(game.clientHeight - playerSize, y + dy)
-        );
+// Verifica se o personagem encostou em alguma moeda
+function collectCoins() {
+    const playerRect = player.getBoundingClientRect();
 
-        if (!canMove(newX, newY)) {
+    coinElements.forEach(function(coin) {
+        if (coin.style.display === "none") {
             return;
         }
 
-        x = newX;
-        y = newY;
+        const coinRect = coin.getBoundingClientRect();
 
-        drawPlayer();
-        colletCoins();
-    }
+        const touching =
+            playerRect.right > coinRect.left &&
+            playerRect.left < coinRect.right &&
+            playerRect.bottom > coinRect.top &&
+            playerRect.top < coinRect.bottom;
 
-    // Controles do teclado: WASD e setas
-    document.addEventListener("keydown", function(event) {
-        const key = event.key.toLowerCase();
+        if (touching) {
+            coin.style.display = "none";
+            coins++;
 
-        const keys = [
-            "arrowup", "arrowdown",
-            "arrowleft", "arrowright",
-            "w", "a", "s", "d"
-        ];
-
-        if (keys.includes(key)) {
-            event.preventDefault();
-        }
-
-        if (key === "arrowup" || key === "w") {
-            move(0, -speed);
-        }
-
-        if (key === "arrowdown" || key === "s") {
-            move(0, speed);
-        }
-
-        if (key === "arrowleft" || key === "a") {
-            move(-speed, 0);
-        }
-
-        if (key === "arrowright" || key === "d") {
-            move(speed, 0);
+            document.getElementById("coinCount").textContent = coins;
         }
     });
+}
 
-    // Controles para celular
-    document.getElementById("up").addEventListener(
-        "click", () => move(0, -speed)
+// Movimenta o personagem e impede que saia do mapa
+function move(dx, dy) {
+    const newX = Math.max(
+        0,
+        Math.min(game.clientWidth - playerSize, x + dx)
     );
 
-    document.getElementById("down").addEventListener(
-        "click", () => move(0, speed)
+    const newY = Math.max(
+        0,
+        Math.min(game.clientHeight - playerSize, y + dy)
     );
 
-    document.getElementById("left").addEventListener(
-        "click", () => move(-speed, 0)
-    );
+    if (!canMove(newX, newY)) {
+        return;
+    }
 
-    document.getElementById("right").addEventListener(
-        "click", () => move(speed, 0)
-    );
+    x = newX;
+    y = newY;
 
-    // Inicia o jogo
     drawPlayer();
+    collectCoins();
+}
+
+// Controles pelo teclado
+document.addEventListener("keydown", function(event) {
+    const key = event.key.toLowerCase();
+
+    const keys = [
+        "arrowup", "arrowdown",
+        "arrowleft", "arrowright",
+        "w", "a", "s", "d"
+    ];
+
+    if (keys.includes(key)) {
+        event.preventDefault();
+    }
+
+    if (key === "arrowup" || key === "w") {
+        move(0, -speed);
+    }
+
+    if (key === "arrowdown" || key === "s") {
+        move(0, speed);
+    }
+
+    if (key === "arrowleft" || key === "a") {
+        move(-speed, 0);
+    }
+
+    if (key === "arrowright" || key === "d") {
+        move(speed, 0);
+    }
+});
+
+// Controles pelos botões
+document.getElementById("up").addEventListener(
+    "click", () => move(0, -speed)
+);
+
+document.getElementById("down").addEventListener(
+    "click", () => move(0, speed)
+);
+
+document.getElementById("left").addEventListener(
+    "click", () => move(-speed, 0)
+);
+
+document.getElementById("right").addEventListener(
+    "click", () => move(speed, 0)
+);
+
+// Posiciona o personagem quando o jogo começa
+drawPlayer();
 </script>
 
 </body>
 </html>
+
