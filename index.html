@@ -171,6 +171,44 @@
             grid-column: 3;
             grid-row: 2;
         }
+
+        /* MOEDAS COLETÁVEIS */
+        .coin {
+            position: absolute;
+            font-size: 28px;
+            z-index: 3;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .coin1 {
+            left: 150px;
+            top: 180px;
+        }
+
+        .coin2 {
+            left: 300px;
+            top: 300px;
+        }
+
+        .coin3 {
+            right: 150px;
+            top: 220px;
+        }
+
+        .coin4 {
+            right: 300px;
+            top: 100px;
+        }
+
+        .coin5 {
+            left: 400px;
+            bottom: 60px;
+        }
+        
     </style>
 </head>
 
@@ -181,6 +219,12 @@
     <div class="path"></div>
     <div class="lake"></div>
 
+    <div class="coin coin1">🪙</div>
+    <div class="coin coin2">🪙</div>
+    <div class="coin coin3">🪙</div>
+    <div class="coin coin4">🪙</div>
+    <div class="coin coin5">🪙</div>
+
     <div class="obstacle tree tree1">🌳</div>
     <div class="obstacle tree tree2">🌳</div>
     <div class="obstacle tree tree3">🌳</div>
@@ -190,7 +234,7 @@
 
     <div id="hud">
         ❤️ Vida: 100<br>
-        ⭐ Moedas: 0
+        ⭐ Moedas: <span id="coinCount">0</span>
     </div>
 
     <div id="player"></div>
@@ -213,6 +257,35 @@
 
     const speed = 10;
     const playerSize = 46;
+
+    let coins = 0;
+
+    const coinElements = document.querySelectorAll(".coin");
+
+    function collectCoins() {
+        const playerRect = player.getBoundingClientRect();
+        
+        coinElements.forEach(function(coin) {
+            if (coin.style.display === "none") {
+                return;
+            }
+            
+            const coinRect = coin.getBoundingClientRect();
+            
+            const touching =
+                playerRect.right > coinRect.left &&
+                playerRect.left < coinRect.right &&
+                playerRect.bottom > coinRect.top &&
+                playerRect.top < coinRect.bottom;
+
+            if (touching) {
+                coin.style.display = "none";
+                coins++;
+
+                document.getElementById("coinCount").textContent = coins;
+            }
+        });
+    }
 
     // Coloca o personagem no centro do mapa
     function drawPlayer() {
@@ -282,6 +355,7 @@
         y = newY;
 
         drawPlayer();
+        colletCoins();
     }
 
     // Controles do teclado: WASD e setas
