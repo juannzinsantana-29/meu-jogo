@@ -188,18 +188,29 @@ button {
 .r2 { left: 28%; top: 76%; }
 
 /* MOEDAS ESPALHADAS PELO MAPA */
+
 .coin {
     position: absolute;
-    width: 30px;
-    height: 30px;
+    width: 18px;
+    height: 18px;
+    background: radial-gradient(circle at 30% 30%, #fff176, #ffc107 60%, #d99000);
+    border: 3px solid #ffe082;
+    border-radius: 50%;
+    box-shadow: 0 0 8px #ffd54f;
+    box-sizing: border-box;
+    z-index: 5;
+}
+
+.coin::after {
+    content: "$";
+    position: absolute;
+    inset: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 25px;
-    z-index: 3;
-    pointer-events: none;
-    animation: coinFloat 1s ease-in-out infinite alternate;
-    filter: drop-shadow(0 0 4px #ffe36b);
+    color: #9b6500;
+    font-size: 11px;
+    font-weight: bold;
 }
 
 @keyframes coinFloat {
