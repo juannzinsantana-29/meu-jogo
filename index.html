@@ -188,44 +188,23 @@ button {
 .r2 { left: 28%; top: 76%; }
 
 /* MOEDAS ESPALHADAS PELO MAPA */
-.coin span {
-    display: block;
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    background: radial-gradient(
-        circle at 30% 25%,
-        #fff3a0
-        #ffc928 55%,
-        #c98208
-    );
-    border: 3px solid #a96c08;
-    box-shadow: 0 2px 0 #80530b;
+.coin {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 25px;
+    z-index: 3;
+    pointer-events: none;
+    animation: coinFloat 1s ease-in-out infinite alternate;
+    filter: drop-shadow(0 0 4px #ffe36b);
 }
 
-.coin1 {
-    left: 150px;
-    top: 300px;
-}
-
-.coin2 {
-    left: 300px;
-    top: 300px;
-}
-
-.coin3 {
-    left: 150px;
-    top: 100px;
-}
-
-.coin4 {
-    right: 300px;
-    top: 100px;
-}
-
-.coin5 {
-    left: 400px;
-    bottom: 60px;
+@keyframes coinFloat {
+    from { transform: translateY(0); }
+    to { transform: translateY(-5px); }
 }
 
 .element {
@@ -347,7 +326,7 @@ button {
         <div class="hud-box">🛡️ <span id="class-name">Aventureiro</span></div>
         <div class="hud-box">❤️ HP: <span id="hp">100</span>/100</div>
         <div class="hud-box">🔵 Mana: <span id="mana">100</span>/100</div>
-        <div class="hud-box">🪙 Moedas: <span id="coinsCount">0</span>/5<br></div>
+        <div class="hud-box">🪙 Moedas: <span id="coins">0</span></div>
         <div class="hud-box">✨ Forma: <span id="form">Normal</span></div>
     </div>
 
@@ -365,11 +344,11 @@ button {
         <div class="rock r1 obstacle"></div>
         <div class="rock r2 obstacle"></div>
 
-        <div class="coin coin1"><span></span></div>
-        <div class="coin coin2"><span></span></div>
-        <div class="coin coin3"><span></span></div>
-        <div class="coin coin4"><span></span></div>
-        <div class="coin coin5"><span></span></div>
+        <div class="coin" style="left:18%;top:48%">🪙</div>
+        <div class="coin" style="left:42%;top:58%">🪙</div>
+        <div class="coin" style="left:78%;top:58%">🪙</div>
+        <div class="coin" style="left:61%;top:82%">🪙</div>
+        <div class="coin" style="left:8%;top:35%">🪙</div>
 
         <div class="element fire" data-element="fire" title="Fogo">🔥</div>
         <div class="element water" data-element="water" title="Água">💧</div>
@@ -395,12 +374,6 @@ button {
         <button class="move down" data-dir="down">⬇️</button>
         <button class="move right" data-dir="right">➡️</button>
     </div>
-
-    <p class="instructions">
-        Use as setas do teclado ou os botões para se movimentar.
-        <br>
-    </p>
-        
 
     <button id="back">Voltar à seleção de classe</button>
 </section>
