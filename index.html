@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -6,9 +7,7 @@
 <title>Pixel Adventure</title>
 
 <style>
-* {
-    box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
     margin: 0;
@@ -24,9 +23,7 @@ h1 {
     text-shadow: 2px 2px #23472b;
 }
 
-#menu {
-    padding: 16px;
-}
+#menu { padding: 16px; }
 
 #classes {
     display: grid;
@@ -55,9 +52,7 @@ h1 {
     margin-bottom: 6px;
 }
 
-.class-card small {
-    color: #d0e8d3;
-}
+.class-card small { color: #d0e8d3; }
 
 button {
     cursor: pointer;
@@ -73,6 +68,8 @@ button {
     font-size: 16px;
     margin: 10px;
 }
+
+#start:disabled { opacity: 0.5; cursor: not-allowed; }
 
 #game-wrap {
     display: none;
@@ -121,6 +118,7 @@ button {
     border-top: 5px solid #8f7549;
     border-bottom: 5px solid #8f7549;
     z-index: 1;
+    pointer-events: none;
 }
 
 .lake {
@@ -133,6 +131,7 @@ button {
     background: #3da9e8;
     border: 6px solid #83d8f4;
     z-index: 1;
+    pointer-events: none;
 }
 
 .tree {
@@ -154,17 +153,59 @@ button {
 .t5 { left: 12%; top: 76%; }
 .t6 { left: 82%; top: 77%; }
 
+/* PEDRAS ARREDONDADAS */
 .rock {
     position: absolute;
-    width: 34px;
-    height: 30px;
-    font-size: 27px;
+    width: 35px;
+    height: 27px;
     z-index: 4;
     pointer-events: none;
+    background: linear-gradient(
+        145deg,
+        #c7c7bd,
+        #85877f 60%,
+        #55584f
+    );
+    border: 2px solid #686a62;
+    border-radius: 45% 55% 38% 42%;
+    box-shadow: inset -4px -3px 0 #6b6d65;
+    transform: rotate(-12deg);
+}
+
+.rock::after {
+    content: "";
+    position: absolute;
+    width: 12px;
+    height: 7px;
+    top: 5px;
+    left: 6px;
+    background: #deded5;
+    border-radius: 50%;
+    transform: rotate(-20deg);
 }
 
 .r1 { left: 56%; top: 53%; }
 .r2 { left: 28%; top: 76%; }
+
+/* MOEDAS ESPALHADAS PELO MAPA */
+.coin {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 25px;
+    z-index: 3;
+    pointer-events: none;
+    animation: coinFloat 1s ease-in-out infinite alternate;
+    filter: drop-shadow(0 0 4px #ffe36b);
+}
+
+@keyframes coinFloat {
+    from { transform: translateY(0); }
+    to { transform: translateY(-5px); }
+}
 
 .element {
     position: absolute;
@@ -202,11 +243,12 @@ button {
     justify-content: center;
     font-size: 21px;
     user-select: none;
+    pointer-events: none;
 }
 
 #player.metamorpho {
-    background: transparent;
-    border: 0;
+    background: transparent !important;
+    border: 0 !important;
     font-size: 30px;
 }
 
@@ -265,17 +307,10 @@ button {
     color: #17321b;
     margin: 8px;
 }
-
-@media (min-width: 700px) {
-    #mobile-controls {
-        opacity: 0.85;
-    }
-}
 </style>
 </head>
 
 <body>
-
 <h1>🌲 Pixel Adventure 🌲</h1>
 
 <section id="menu">
@@ -306,8 +341,14 @@ button {
         <div class="tree t5 obstacle">🌳</div>
         <div class="tree t6 obstacle">🌳</div>
 
-        <div class="rock r1 obstacle">🪨</div>
-        <div class="rock r2 obstacle">🪨</div>
+        <div class="rock r1 obstacle"></div>
+        <div class="rock r2 obstacle"></div>
+
+        <div class="coin" style="left:18%;top:48%">🪙</div>
+        <div class="coin" style="left:42%;top:58%">🪙</div>
+        <div class="coin" style="left:78%;top:58%">🪙</div>
+        <div class="coin" style="left:61%;top:82%">🪙</div>
+        <div class="coin" style="left:8%;top:35%">🪙</div>
 
         <div class="element fire" data-element="fire" title="Fogo">🔥</div>
         <div class="element water" data-element="water" title="Água">💧</div>
@@ -339,78 +380,18 @@ button {
 
 <script>
 const classData = [
-    {
-        name: "Guerreiro",
-        icon: "⚔️",
-        description: "Combatente equilibrado, especialista em ataques físicos.",
-        skills: ["Golpe forte", "Defesa de ferro", "Corte poderoso"]
-    },
-    {
-        name: "Mago",
-        icon: "🧙",
-        description: "Controla energias mágicas e ataca à distância.",
-        skills: ["Bola mágica", "Escudo arcano", "Explosão arcana"]
-    },
-    {
-        name: "Ninja",
-        icon: "🥷",
-        description: "Rápido e furtivo, especialista em movimentos ágeis.",
-        skills: ["Corte veloz", "Passo das sombras", "Ataque surpresa"]
-    },
-    {
-        name: "Arqueiro",
-        icon: "🏹",
-        description: "Ataca de longe com precisão.",
-        skills: ["Flecha rápida", "Disparo triplo", "Chuva de flechas"]
-    },
-    {
-        name: "Paladino",
-        icon: "🛡️",
-        description: "Guerreiro que combina proteção e energia sagrada.",
-        skills: ["Golpe sagrado", "Barreira divina", "Luz purificadora"]
-    },
-    {
-        name: "Assassino",
-        icon: "🗡️",
-        description: "Especialista em ataques rápidos e estratégicos.",
-        skills: ["Lâmina veloz", "Desaparecer", "Ataque preciso"]
-    },
-    {
-        name: "Cavaleiro das Trevas",
-        icon: "🌑",
-        description: "Usa poderes sombrios em combate.",
-        skills: ["Corte sombrio", "Armadura negra", "Eclipse"]
-    },
-    {
-        name: "Invocador",
-        icon: "🔮",
-        description: "Canaliza energia para invocar forças místicas.",
-        skills: ["Espírito guardião", "Selo místico", "Invocação maior"]
-    },
-    {
-        name: "Berserker",
-        icon: "🪓",
-        description: "Lutador agressivo que aposta na força bruta.",
-        skills: ["Golpe brutal", "Fúria", "Impacto devastador"]
-    },
-    {
-        name: "Druida",
-        icon: "🍃",
-        description: "Conecta-se à natureza e às suas energias.",
-        skills: ["Raízes", "Cura natural", "Tempestade verde"]
-    },
-    {
-        name: "Monge",
-        icon: "🥋",
-        description: "Combina disciplina, velocidade e energia interior.",
-        skills: ["Punho firme", "Concentração", "Onda espiritual"]
-    },
-    {
-        name: "Metamorfo Elemental",
-        icon: "🌈",
-        description: "Transforma-se ao entrar em contato com elementos.",
-        skills: ["Pulso elemental", "Mudança de forma", "Explosão elemental"]
-    }
+    {name:"Guerreiro",icon:"⚔️",description:"Combatente equilibrado, especialista em ataques físicos.",skills:["Golpe forte","Defesa de ferro","Corte poderoso"]},
+    {name:"Mago",icon:"🧙",description:"Controla energias mágicas e ataca à distância.",skills:["Bola mágica","Escudo arcano","Explosão arcana"]},
+    {name:"Ninja",icon:"🥷",description:"Rápido e furtivo, especialista em movimentos ágeis.",skills:["Corte veloz","Passo das sombras","Ataque surpresa"]},
+    {name:"Arqueiro",icon:"🏹",description:"Ataca de longe com precisão.",skills:["Flecha rápida","Disparo triplo","Chuva de flechas"]},
+    {name:"Paladino",icon:"🛡️",description:"Guerreiro que combina proteção e energia sagrada.",skills:["Golpe sagrado","Barreira divina","Luz purificadora"]},
+    {name:"Assassino",icon:"🗡️",description:"Especialista em ataques rápidos e estratégicos.",skills:["Lâmina veloz","Desaparecer","Ataque preciso"]},
+    {name:"Cavaleiro das Trevas",icon:"🌑",description:"Usa poderes sombrios em combate.",skills:["Corte sombrio","Armadura negra","Eclipse"]},
+    {name:"Invocador",icon:"🔮",description:"Canaliza energia para invocar forças místicas.",skills:["Espírito guardião","Selo místico","Invocação maior"]},
+    {name:"Berserker",icon:"🪓",description:"Lutador agressivo que aposta na força bruta.",skills:["Golpe brutal","Fúria","Impacto devastador"]},
+    {name:"Druida",icon:"🍃",description:"Conecta-se à natureza e às suas energias.",skills:["Raízes","Cura natural","Tempestade verde"]},
+    {name:"Monge",icon:"🥋",description:"Combina disciplina, velocidade e energia interior.",skills:["Punho firme","Concentração","Onda espiritual"]},
+    {name:"Metamorfo Elemental",icon:"🌈",description:"Transforma-se ao entrar em contato com elementos.",skills:["Pulso elemental","Mudança de forma","Explosão elemental"]}
 ];
 
 const menu = document.getElementById("menu");
@@ -437,18 +418,17 @@ const playerWidth = 30;
 const playerHeight = 34;
 
 const elementInfo = {
-    fire: { name: "Fogo", emoji: "🔥" },
-    water: { name: "Água", emoji: "💧" },
-    earth: { name: "Terra", emoji: "🌱" },
-    ice: { name: "Gelo", emoji: "❄️" },
-    lightning: { name: "Raio", emoji: "⚡" }
+    fire: {name:"Fogo",emoji:"🔥"},
+    water: {name:"Água",emoji:"💧"},
+    earth: {name:"Terra",emoji:"🌱"},
+    ice: {name:"Gelo",emoji:"❄️"},
+    lightning: {name:"Raio",emoji:"⚡"}
 };
 
-classData.forEach((item, index) => {
+classData.forEach(item => {
     const card = document.createElement("button");
     card.className = "class-card";
-    card.innerHTML =
-        `<strong>${item.icon} ${item.name}</strong><small>${item.description}</small>`;
+    card.innerHTML = `<strong>${item.icon} ${item.name}</strong><small>${item.description}</small>`;
 
     card.addEventListener("click", () => {
         selectedClass = item;
@@ -456,8 +436,7 @@ classData.forEach((item, index) => {
             el.style.borderColor = "#4f8156";
         });
         card.style.borderColor = "#d4ff80";
-        classInfo.textContent =
-            item.name + ": " + item.description +
+        classInfo.textContent = item.name + ": " + item.description +
             " Habilidades: " + item.skills.join(", ") + ".";
         startButton.disabled = false;
     });
@@ -490,88 +469,102 @@ function overlaps(a, b) {
            a.bottom > b.top;
 }
 
-/* Colisão com árvores e pedras.
-   Os obstáculos são medidos em relação ao mapa. */
+/* Colisão com árvores e pedras */
 function blocked(nextX, nextY) {
-    const playerRect = {
-        left: nextX,
-        top: nextY,
-        right: nextX + playerWidth,
-        bottom: nextY + playerHeight
+    const p = {
+        left: nextX + 3,
+        top: nextY + 3,
+        right: nextX + playerWidth - 3,
+        bottom: nextY + playerHeight - 2
     };
 
-    const obstacles = game.querySelectorAll(".obstacle");
-
-    for (const obj of obstacles) {
+    for (const obj of game.querySelectorAll(".obstacle")) {
         const left = obj.offsetLeft;
         const top = obj.offsetTop;
-
-        /* Hitbox menor para não bloquear o jogador no espaço
-           transparente acima das árvores. */
-        let obstacleRect;
+        let r;
 
         if (obj.classList.contains("tree")) {
-            obstacleRect = {
+            r = {
                 left: left + 7,
-                top: top + 23,
+                top: top + 25,
                 right: left + obj.offsetWidth - 7,
                 bottom: top + obj.offsetHeight
             };
-        } else {
-            obstacleRect = {
+        } else if (obj.classList.contains("rock")) {
+            r = {
                 left: left + 3,
-                top: top + 5,
+                top: top + 3,
                 right: left + obj.offsetWidth - 3,
                 bottom: top + obj.offsetHeight - 2
             };
+        } else {
+            continue;
         }
 
-        if (overlaps(playerRect, obstacleRect)) {
-            return true;
-        }
+        if (overlaps(p, r)) return true;
     }
 
     return false;
 }
 
-function getElementAtPlayer() {
-    const playerRect = {
+/* Transformação do Metamorfo Elemental */
+function updateTransformation() {
+    if (!selectedClass || selectedClass.name !== "Metamorfo Elemental") return;
+
+    const p = {
         left: x,
         top: y,
         right: x + playerWidth,
         bottom: y + playerHeight
     };
 
-    for (const element of game.querySelectorAll(".element")) {
+    for (const el of game.querySelectorAll(".element")) {
         const r = {
-            left: element.offsetLeft,
-            top: element.offsetTop,
-            right: element.offsetLeft + element.offsetWidth,
-            bottom: element.offsetTop + element.offsetHeight
+            left: el.offsetLeft,
+            top: el.offsetTop,
+            right: el.offsetLeft + el.offsetWidth,
+            bottom: el.offsetTop + el.offsetHeight
         };
 
-        if (overlaps(playerRect, r)) {
-            return element.dataset.element;
+        if (overlaps(p, r)) {
+            const element = el.dataset.element;
+
+            if (element !== currentForm) {
+                currentForm = element;
+                player.className = "metamorpho form-" + element;
+                player.textContent = elementInfo[element].emoji;
+                showMessage("Você se transformou em " + elementInfo[element].name + "!");
+                updateHUD();
+            }
+            return;
         }
     }
-
-    return null;
 }
 
-function updateTransformation() {
-    if (!selectedClass || selectedClass.name !== "Metamorfo Elemental") {
-        return;
-    }
+/* Coleta automática ao encostar nas moedas */
+function collectCoins() {
+    const p = {
+        left: x,
+        top: y,
+        right: x + playerWidth,
+        bottom: y + playerHeight
+    };
 
-    const element = getElementAtPlayer();
+    document.querySelectorAll("#game .coin").forEach(coin => {
+        const r = {
+            left: coin.offsetLeft,
+            top: coin.offsetTop,
+            right: coin.offsetLeft + coin.offsetWidth,
+            bottom: coin.offsetTop + coin.offsetHeight
+        };
 
-    if (element && element !== currentForm) {
-        currentForm = element;
-        player.className = "metamorpho form-" + element;
-        player.textContent = elementInfo[element].emoji;
-        showMessage("Você se transformou em " + elementInfo[element].name + "!");
-        updateHUD();
-    }
+        if (overlaps(p, r)) {
+            coin.remove();
+            coins++;
+            updateHUD();
+            showMessage("🪙 Você coletou uma moeda!");
+        }
+    });
 }
 
 function move(dx, dy) {
@@ -582,13 +575,12 @@ function move(dx, dy) {
     const nextX = Math.max(0, Math.min(maxX, x + dx));
     const nextY = Math.max(0, Math.min(maxY, y + dy));
 
-    /* Verifica cada eixo separadamente para permitir deslizar
-       ao longo de uma árvore ou pedra. */
     if (!blocked(nextX, y)) x = nextX;
     if (!blocked(x, nextY)) y = nextY;
 
     setPlayerPosition();
     updateTransformation();
+    collectCoins();
 }
 
 function startGame() {
@@ -599,16 +591,13 @@ function startGame() {
 
     document.getElementById("class-name").textContent = selectedClass.name;
 
-    x = Math.max(0, (game.clientWidth - playerWidth) / 2);
-    y = Math.max(0, (game.clientHeight - playerHeight) / 2);
+    x = (game.clientWidth - playerWidth) / 2;
+    y = (game.clientHeight - playerHeight) / 2;
 
     player.className = "";
-    player.id = "player";
     player.textContent = selectedClass.icon;
-    player.style.background = selectedClass.name === "Metamorfo Elemental"
-        ? "transparent" : "#168cff";
-    player.style.border = selectedClass.name === "Metamorfo Elemental"
-        ? "0" : "3px solid #d7f0ff";
+    player.style.background = "#168cff";
+    player.style.border = "3px solid #d7f0ff";
 
     if (selectedClass.name === "Metamorfo Elemental") {
         player.classList.add("metamorpho");
@@ -621,7 +610,7 @@ function startGame() {
 
     setPlayerPosition();
     updateHUD();
-    showMessage("A aventura começou! Explore o mapa e encontre os elementos.");
+    showMessage("A aventura começou! Explore o mapa e colete as moedas.");
 }
 
 startButton.addEventListener("click", startGame);
@@ -634,8 +623,7 @@ document.getElementById("back").addEventListener("click", () => {
 
 document.addEventListener("keydown", event => {
     const key = event.key.toLowerCase();
-    const valid = ["arrowup", "arrowdown", "arrowleft", "arrowright",
-                   "w", "a", "s", "d"];
+    const valid = ["arrowup","arrowdown","arrowleft","arrowright","w","a","s","d"];
 
     if (valid.includes(key)) {
         event.preventDefault();
@@ -676,21 +664,21 @@ requestAnimationFrame(movementLoop);
 /* Controles para celular */
 document.querySelectorAll(".move").forEach(button => {
     const direction = button.dataset.dir;
-    const keyByDirection = {
+    const key = {
         up: "arrowup",
         down: "arrowdown",
         left: "arrowleft",
         right: "arrowright"
-    };
+    }[direction];
 
     button.addEventListener("pointerdown", event => {
         event.preventDefault();
         button.setPointerCapture(event.pointerId);
-        movementKeys.add(keyByDirection[direction]);
+        movementKeys.add(key);
     });
 
     function release() {
-        movementKeys.delete(keyByDirection[direction]);
+        movementKeys.delete(key);
     }
 
     button.addEventListener("pointerup", release);
@@ -698,40 +686,38 @@ document.querySelectorAll(".move").forEach(button => {
     button.addEventListener("lostpointercapture", release);
 });
 
+/* Botão extra de moeda continua funcionando */
 document.getElementById("collect").addEventListener("click", () => {
-    coins += 1;
+    coins++;
     updateHUD();
-    showMessage("Você coletou uma moeda! Total: " + coins + ".");
+    showMessage("🪙 Você recebeu uma moeda!");
 });
 
+/* Habilidades demonstrativas */
 document.querySelectorAll("[data-skill]").forEach(button => {
     button.addEventListener("click", () => {
         if (!selectedClass) return;
 
         if (mana < 10) {
-            showMessage("Mana insuficiente para usar a habilidade!");
+            showMessage("Mana insuficiente!");
             return;
         }
 
         mana -= 10;
         updateHUD();
 
-        const skillIndex = Number(button.dataset.skill) - 1;
-        const skillName = selectedClass.skills[skillIndex];
-
-        showMessage(skillName + " ativada! (Demonstração: combate ainda não implementado.)");
+        const skill = selectedClass.skills[Number(button.dataset.skill) - 1];
+        showMessage(skill + " ativada! (Combate ainda não implementado.)");
     });
 });
 
 window.addEventListener("resize", () => {
     if (gameWrap.style.display === "none") return;
 
-    x = Math.min(x, game.clientWidth - playerWidth);
-    y = Math.min(y, game.clientHeight - playerHeight);
-
+    x = Math.max(0, Math.min(x, game.clientWidth - playerWidth));
+    y = Math.max(0, Math.min(y, game.clientHeight - playerHeight));
     setPlayerPosition();
 });
 </script>
-
 </body>
 </html>
