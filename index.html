@@ -22,6 +22,7 @@ body {
 
 h1 {
     color: #f5d76e;
+    margin: 10px 0 15px;
 }
 
 #game {
@@ -30,7 +31,7 @@ h1 {
     max-width: 95vw;
     height: min(550px, 85vh);
     min-height: 400px;
-    margin: auto;
+    margin: 0 auto;
     overflow: hidden;
     background: #6b8e23;
     border: 4px solid #3c5220;
@@ -64,6 +65,8 @@ h1 {
     width: 50px;
     height: 50px;
     font-size: 42px;
+    line-height: 50px;
+    text-align: center;
     z-index: 4;
 }
 
@@ -85,8 +88,11 @@ h1 {
 .rock {
     position: absolute;
     width: 40px;
-    height: 40px;
-    font-size: 32px;
+    height: 32px;
+    background: linear-gradient(145deg, #d0d5d8, #858e95 60%, #626b72);
+    border: 3px solid #505960;
+    border-radius: 45% 55% 35% 40%;
+    box-shadow: inset -4px -3px 0 #626b72;
     z-index: 4;
 }
 
@@ -107,8 +113,22 @@ h1 {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 28px;
     z-index: 3;
+}
+
+.coin span {
+    display: block;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: radial-gradient(
+        circle at 30% 25%,
+        #fff3a0,
+        #ffc928 55%,
+        #c98208
+    );
+    border: 3px solid #a96c08;
+    box-shadow: 0 2px 0 #80530b;
 }
 
 .coin1 {
@@ -140,8 +160,8 @@ h1 {
     position: absolute;
     width: 46px;
     height: 46px;
-    background: #3498db;
-    border: 3px solid #1b4f72;
+    background: #19baff;
+    border: 3px solid #2471a3;
     border-radius: 8px;
     z-index: 5;
 }
@@ -173,6 +193,7 @@ h1 {
     border-radius: 10px;
     background: #f5d76e;
     cursor: pointer;
+    touch-action: manipulation;
 }
 
 #controls button:active {
@@ -203,6 +224,18 @@ h1 {
     color: #ddd;
     font-size: 14px;
 }
+
+@media (max-width: 600px) {
+    body {
+        padding: 8px;
+    }
+
+    #game {
+        width: 100%;
+        height: 65vh;
+        min-height: 400px;
+    }
+}
 </style>
 </head>
 
@@ -215,33 +248,29 @@ h1 {
     <div class="path"></div>
     <div class="lake"></div>
 
-    <!-- Moedas -->
-    <div class="coin coin1">🪙</div>
-    <div class="coin coin2">🪙</div>
-    <div class="coin coin3">🪙</div>
-    <div class="coin coin4">🪙</div>
-    <div class="coin coin5">🪙</div>
+    <div class="tree tree1">🌳</div>
+    <div class="tree tree2">🌳</div>
+    <div class="tree tree3">🌳</div>
 
-    <!-- Obstáculos -->
-    <div class="obstacle tree tree1">🌳</div>
-    <div class="obstacle tree tree2">🌳</div>
-    <div class="obstacle tree tree3">🌳</div>
+    <div class="rock rock1 obstacle"></div>
+    <div class="rock rock2 obstacle"></div>
 
-    <div class="obstacle rock rock1">🪨</div>
-    <div class="obstacle rock rock2">🪨</div>
+    <div class="coin coin1"><span></span></div>
+    <div class="coin coin2"><span></span></div>
+    <div class="coin coin3"><span></span></div>
+    <div class="coin coin4"><span></span></div>
+    <div class="coin coin5"><span></span></div>
 
-    <!-- Painel de informações -->
     <div id="hud">
-        ❤️ Vida: 100<br>
-        ⭐ Moedas: <span id="coinCount">0</span>
+        🪙 Moedas: <span id="coinCount">0</span>/5
+        <br>
+        📍 Explore o mapa!
     </div>
 
-    <!-- Jogador -->
     <div id="player"></div>
 
 </div>
 
-<!-- Botões de movimento -->
 <div id="controls">
     <button id="up" aria-label="Cima">⬆️</button>
     <button id="left" aria-label="Esquerda">⬅️</button>
@@ -250,179 +279,209 @@ h1 {
 </div>
 
 <p class="instructions">
-    Use as setas do teclado ou WASD para andar e coletar moedas!
+    Use as setas do teclado ou os botões para se movimentar.
+    <br>
+    Colete todas as moedas e explore o mapa!
 </p>
 
 <script>
-const player = document.getElementById("player");
 const game = document.getElementById("game");
-const coinElements = document.querySelectorAll(".coin");
+const player = document.getElementById("player");
+const coinCount = document.getElementById("coinCount");
 
-let x = game.clientWidth / 2 - 23;
-let y = game.clientHeight / 2 - 23;
+const speed = 5;
 
-const speed = 10;
-const playerSize = 46;
+let playerX = 30;
+let playerY = 30;
+let coinsCollected = 0;
 
-let coins = 0;
+const keys = {
+    ArrowUp: false,
+    ArrowDown: false,
+    ArrowLeft: false,
+    ArrowRight: false,
+    w: false,
+    a: false,
+    s: false,
+    d: false
+};
 
-// Desenha o jogador
-function drawPlayer() {
-    player.style.left = x + "px";
-    player.style.top = y + "px";
+const collectedCoins = new Set();
+
+function updatePlayer() {
+    player.style.left = playerX + "px";
+    player.style.top = playerY + "px";
 }
 
-// Verifica colisão com árvores e pedras
-function canMove(newX, newY) {
-    const obstacles = document.querySelectorAll(".obstacle");
-    const gameRect = game.getBoundingClientRect();
+function overlaps(a, b) {
+    return !(
+        a.right <= b.left ||
+        a.left >= b.right ||
+        a.bottom <= b.top ||
+        a.top >= b.bottom
+    );
+}
 
+function isBlocked(nextX, nextY) {
     const playerRect = {
-        left: newX,
-        right: newX + playerSize,
-        top: newY,
-        bottom: newY + playerSize
+        left: nextX,
+        top: nextY,
+        right: nextX + player.offsetWidth,
+        bottom: nextY + player.offsetHeight
     };
 
-    for (const obstacle of obstacles) {
-        const rect = obstacle.getBoundingClientRect();
+    const obstacles = game.querySelectorAll(".obstacle");
 
-        const obstacleRect = {
-            left: rect.left - gameRect.left - game.clientLeft,
-            right: rect.right - gameRect.left - game.clientLeft,
-            top: rect.top - gameRect.top - game.clientTop,
-            bottom: rect.bottom - gameRect.top - game.clientTop
+    for (const obstacle of obstacles) {
+        const rect = {
+            left: obstacle.offsetLeft,
+            top: obstacle.offsetTop,
+            right: obstacle.offsetLeft + obstacle.offsetWidth,
+            bottom: obstacle.offsetTop + obstacle.offsetHeight
         };
 
-        const collision =
-            playerRect.right > obstacleRect.left &&
-            playerRect.left < obstacleRect.right &&
-            playerRect.bottom > obstacleRect.top &&
-            playerRect.top < obstacleRect.bottom;
-
-        if (collision) {
-            return false;
+        if (overlaps(playerRect, rect)) {
+            return true;
         }
     }
 
-    return true;
+    return false;
 }
 
-// Coleta moedas próximas do jogador
 function collectCoins() {
-    const playerRect = player.getBoundingClientRect();
+    const coins = game.querySelectorAll(".coin");
 
-    const playerCenterX =
-        playerRect.left + playerRect.width / 2;
+    coins.forEach((coin, index) => {
+        if (collectedCoins.has(index)) return;
 
-    const playerCenterY =
-        playerRect.top + playerRect.height / 2;
+        const playerRect = {
+            left: playerX,
+            top: playerY,
+            right: playerX + player.offsetWidth,
+            bottom: playerY + player.offsetHeight
+        };
 
-    coinElements.forEach(function(coin) {
-        if (coin.dataset.collected === "true") {
-            return;
-        }
+        const coinRect = {
+            left: coin.offsetLeft,
+            top: coin.offsetTop,
+            right: coin.offsetLeft + coin.offsetWidth,
+            bottom: coin.offsetTop + coin.offsetHeight
+        };
 
-        const coinRect = coin.getBoundingClientRect();
-
-        const coinCenterX =
-            coinRect.left + coinRect.width / 2;
-
-        const coinCenterY =
-            coinRect.top + coinRect.height / 2;
-
-        const distanceX = playerCenterX - coinCenterX;
-        const distanceY = playerCenterY - coinCenterY;
-
-        const distance = Math.sqrt(
-            distanceX * distanceX +
-            distanceY * distanceY
-        );
-
-        if (distance < 40) {
-            coin.dataset.collected = "true";
+        if (overlaps(playerRect, coinRect)) {
+            collectedCoins.add(index);
             coin.style.display = "none";
 
-            coins++;
+            coinsCollected++;
+            coinCount.textContent = coinsCollected;
 
-            document.getElementById("coinCount").textContent = coins;
+            if (coinsCollected === 5) {
+                setTimeout(() => {
+                    alert("Parabéns! Você coletou todas as moedas! 🎉");
+                }, 100);
+            }
         }
     });
 }
 
-// Movimento do jogador
 function move(dx, dy) {
-    const newX = Math.max(
-        0,
-        Math.min(game.clientWidth - playerSize, x + dx)
-    );
+    const maxX = game.clientWidth - player.offsetWidth;
+    const maxY = game.clientHeight - player.offsetHeight;
 
-    const newY = Math.max(
-        0,
-        Math.min(game.clientHeight - playerSize, y + dy)
-    );
+    const nextX = Math.max(0, Math.min(maxX, playerX + dx));
+    const nextY = Math.max(0, Math.min(maxY, playerY + dy));
 
-    if (!canMove(newX, newY)) {
-        return;
+    if (!isBlocked(nextX, playerY)) {
+        playerX = nextX;
     }
 
-    x = newX;
-    y = newY;
+    if (!isBlocked(playerX, nextY)) {
+        playerY = nextY;
+    }
 
-    drawPlayer();
+    updatePlayer();
     collectCoins();
 }
 
-// Teclado: setas e WASD
-document.addEventListener("keydown", function(event) {
-    const key = event.key.toLowerCase();
+document.addEventListener("keydown", event => {
+    const key = event.key.length === 1
+        ? event.key.toLowerCase()
+        : event.key;
 
-    const keys = [
-        "arrowup",
-        "arrowdown",
-        "arrowleft",
-        "arrowright",
-        "w",
-        "a",
-        "s",
-        "d"
-    ];
-
-    if (keys.includes(key)) {
+    if (key in keys) {
+        keys[key] = true;
         event.preventDefault();
     }
+});
 
-    if (key === "arrowup" || key === "w") {
-        move(0, -speed);
-    } else if (key === "arrowdown" || key === "s") {
-        move(0, speed);
-    } else if (key === "arrowleft" || key === "a") {
-        move(-speed, 0);
-    } else if (key === "arrowright" || key === "d") {
-        move(speed, 0);
+document.addEventListener("keyup", event => {
+    const key = event.key.length === 1
+        ? event.key.toLowerCase()
+        : event.key;
+
+    if (key in keys) {
+        keys[key] = false;
     }
 });
 
-// Botões de movimento
-document.getElementById("up").addEventListener("click", function() {
-    move(0, -speed);
-});
+function gameLoop() {
+    let dx = 0;
+    let dy = 0;
 
-document.getElementById("down").addEventListener("click", function() {
-    move(0, speed);
-});
+    if (keys.ArrowUp || keys.w) dy -= speed;
+    if (keys.ArrowDown || keys.s) dy += speed;
+    if (keys.ArrowLeft || keys.a) dx -= speed;
+    if (keys.ArrowRight || keys.d) dx += speed;
 
-document.getElementById("left").addEventListener("click", function() {
-    move(-speed, 0);
-});
+    if (dx !== 0 && dy !== 0) {
+        dx *= Math.SQRT1_2;
+        dy *= Math.SQRT1_2;
+    }
 
-document.getElementById("right").addEventListener("click", function() {
-    move(speed, 0);
-});
+    if (dx !== 0 || dy !== 0) {
+        move(dx, dy);
+    }
 
-// Inicia o jogo
-drawPlayer();
-collectCoins();
+    requestAnimationFrame(gameLoop);
+}
+
+function setupButton(id, dx, dy) {
+    const button = document.getElementById(id);
+
+    let interval = null;
+
+    function startMoving(event) {
+        event.preventDefault();
+
+        if (interval !== null) return;
+
+        move(dx * speed, dy * speed);
+
+        interval = setInterval(() => {
+            move(dx * speed, dy * speed);
+        }, 40);
+    }
+
+    function stopMoving() {
+        if (interval !== null) {
+            clearInterval(interval);
+            interval = null;
+        }
+    }
+
+    button.addEventListener("pointerdown", startMoving);
+    button.addEventListener("pointerup", stopMoving);
+    button.addEventListener("pointerleave", stopMoving);
+    button.addEventListener("pointercancel", stopMoving);
+}
+
+setupButton("up", 0, -1);
+setupButton("down", 0, 1);
+setupButton("left", -1, 0);
+setupButton("right", 1, 0);
+
+updatePlayer();
+gameLoop();
 </script>
 
 </body>
