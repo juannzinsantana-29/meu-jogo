@@ -7,323 +7,294 @@
 <title>Pixel Adventure</title>
 
 <style>
-* {
-    box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
     margin: 0;
-    font-family: Arial, sans-serif;
-    background: #17251b;
+    background: #17251c;
     color: white;
+    font-family: Arial, sans-serif;
     text-align: center;
 }
 
-header {
-    padding: 14px;
-    background: #243d2b;
-    border-bottom: 3px solid #547d42;
-}
-
 h1 {
-    margin: 0 0 6px;
-    color: #f8d45c;
-    text-shadow: 2px 2px #6c4b20;
+    margin: 12px 0;
+    color: #9cff80;
+    text-shadow: 2px 2px #23472b;
 }
 
-header p {
-    margin: 0;
-    font-size: 13px;
-    color: #d7e8d0;
-}
+#menu { padding: 16px; }
 
-#classScreen {
-    max-width: 900px;
-    margin: 20px auto;
-    padding: 12px;
-}
-
-.class-grid {
+#classes {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(125px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
     gap: 10px;
-    margin-top: 15px;
+    max-width: 900px;
+    margin: 15px auto;
 }
 
 .class-card {
-    background: #2b4430;
-    border: 2px solid #55754a;
+    background: #263d2d;
+    border: 2px solid #4f8156;
     color: white;
-    padding: 12px 6px;
+    padding: 12px;
     border-radius: 10px;
     cursor: pointer;
-    font-size: 14px;
-    transition: transform .15s, background .15s;
 }
 
 .class-card:hover {
-    background: #456b3e;
-    transform: translateY(-3px);
+    background: #3b6043;
+    border-color: #a5ff91;
 }
 
-.class-card .emoji {
+.class-card strong {
     display: block;
-    font-size: 30px;
-    margin-bottom: 7px;
+    margin-bottom: 6px;
 }
+
+.class-card small { color: #d0e8d3; }
 
 button {
-    font-family: inherit;
+    cursor: pointer;
+    border: 0;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-weight: bold;
 }
 
-#gameScreen {
+#start {
+    background: #9cff80;
+    color: #17321b;
+    font-size: 16px;
+    margin: 10px;
+}
+
+#start:disabled { opacity: 0.5; cursor: not-allowed; }
+
+#game-wrap {
     display: none;
-    padding: 12px;
+    padding: 8px;
 }
 
-.hud {
-    max-width: 850px;
-    margin: 0 auto 12px;
+#hud {
     display: flex;
-    flex-wrap: wrap;
     justify-content: center;
+    flex-wrap: wrap;
     gap: 8px;
+    margin: 8px auto;
+    max-width: 900px;
 }
 
-.stat {
-    background: #243d2b;
-    border: 1px solid #5a8050;
+.hud-box {
+    background: #263d2d;
+    border: 1px solid #6d9b71;
     border-radius: 8px;
-    padding: 9px 12px;
-    font-size: 14px;
+    padding: 8px 12px;
 }
 
-.bar {
-    display: inline-block;
-    width: 75px;
-    height: 10px;
-    background: #3b3b3b;
-    border-radius: 5px;
-    overflow: hidden;
-    vertical-align: middle;
-    margin-left: 5px;
-}
-
-.fill {
-    height: 100%;
-    width: 100%;
-    transition: width .2s;
-}
-
-#hpFill { background: #e94d4d; }
-#manaFill { background: #4c9fff; }
-
-#gameArea {
+#game {
     position: relative;
-    width: min(850px, 100%);
-    height: min(520px, 65vh);
+    width: min(900px, 96vw);
+    height: min(540px, 62vh);
     min-height: 360px;
-    margin: auto;
+    margin: 0 auto;
     overflow: hidden;
-    border: 5px solid #4a6338;
+    border: 4px solid #6a482c;
     border-radius: 8px;
-    background: #76a94d;
-    box-shadow: 0 0 20px #0008;
+    background:
+        radial-gradient(ellipse at 20% 20%, #5da64c 0 4%, transparent 5%),
+        radial-gradient(ellipse at 70% 60%, #4c9845 0 5%, transparent 6%),
+        #4e9b43;
     touch-action: none;
-}
-
-#gameMap {
-    position: absolute;
-    inset: 0;
-    overflow: hidden;
-    background-color: #78ae50;
-    background-image:
-        radial-gradient(#8abe5b 1.5px, transparent 1.5px),
-        radial-gradient(#669d44 1px, transparent 1px);
-    background-size: 31px 31px, 47px 47px;
 }
 
 .path {
     position: absolute;
-    left: -10%;
-    top: 54%;
-    width: 125%;
-    height: 65px;
-    background: #bca16a;
-    border-top: 5px solid #d6bc83;
-    border-bottom: 5px solid #94784d;
-    transform: rotate(-13deg);
+    left: 0;
+    top: 68%;
+    width: 100%;
+    height: 70px;
+    background: #b79a63;
+    border-top: 5px solid #8f7549;
+    border-bottom: 5px solid #8f7549;
     z-index: 1;
+    pointer-events: none;
 }
 
-#lake {
+.lake {
     position: absolute;
-    width: 190px;
-    height: 115px;
-    right: 6%;
-    top: 8%;
-    background: #399cdb;
-    border: 7px solid #5c963f;
-    border-radius: 48% 52% 44% 56%;
-    box-shadow: inset 0 0 0 4px #65c7f0;
-    z-index: 2;
-}
-
-#lake::after {
-    content: "";
-    position: absolute;
-    width: 60px;
-    height: 5px;
-    background: #b8edff;
-    border-radius: 5px;
-    left: 30px;
-    top: 30px;
-    transform: rotate(-15deg);
-}
-
-.object {
-    position: absolute;
-    z-index: 4;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    user-select: none;
+    width: 155px;
+    height: 95px;
+    right: 8%;
+    top: 12%;
+    border-radius: 50%;
+    background: #3da9e8;
+    border: 6px solid #83d8f4;
+    z-index: 1;
+    pointer-events: none;
 }
 
 .tree {
-    width: 42px;
-    height: 48px;
-    font-size: 34px;
-    filter: drop-shadow(2px 3px 0 #416b32);
+    position: absolute;
+    width: 50px;
+    height: 58px;
+    font-size: 40px;
+    line-height: 50px;
+    text-align: center;
+    z-index: 4;
+    user-select: none;
+    pointer-events: none;
 }
 
+.t1 { left: 15%; top: 15%; }
+.t2 { left: 35%; top: 38%; }
+.t3 { left: 70%; top: 43%; }
+.t4 { left: 48%; top: 12%; }
+.t5 { left: 12%; top: 76%; }
+.t6 { left: 82%; top: 77%; }
+
+/* PEDRAS ARREDONDADAS */
 .rock {
-    width: 29px;
-    height: 23px;
-    background: #898f91;
-    border: 3px solid #62696b;
-    border-radius: 40% 35% 30% 35%;
-    box-shadow: inset -4px -4px #6b7274;
+    position: absolute;
+    width: 35px;
+    height: 27px;
+    z-index: 4;
+    pointer-events: none;
+    background: linear-gradient(
+        145deg,
+        #c7c7bd,
+        #85877f 60%,
+        #55584f
+    );
+    border: 2px solid #686a62;
+    border-radius: 45% 55% 38% 42%;
+    box-shadow: inset -4px -3px 0 #6b6d65;
+    transform: rotate(-12deg);
 }
 
-.element {
-    width: 38px;
-    height: 38px;
-    font-size: 28px;
-    border-radius: 10px;
-    cursor: default;
-    filter: drop-shadow(0 0 7px #fff6);
+.rock::after {
+    content: "";
+    position: absolute;
+    width: 12px;
+    height: 7px;
+    top: 5px;
+    left: 6px;
+    background: #deded5;
+    border-radius: 50%;
+    transform: rotate(-20deg);
 }
 
-/* MOEDAS REDONDAS */
+.r1 { left: 56%; top: 53%; }
+.r2 { left: 28%; top: 76%; }
+
+/* MOEDAS ESPALHADAS PELO MAPA */
 .coin {
     position: absolute;
-    width: 22px;
-    height: 22px;
-    padding: 0;
-    border-radius: 50%;
-    background: radial-gradient(circle at 30% 25%,
-        #fff7a3 0%, #ffd83d 35%, #f3a900 72%, #bd7600 100%);
-    border: 3px solid #ffe889;
-    box-shadow: 0 0 8px #ffd83d, inset 0 0 0 2px #e9a500;
-    z-index: 5;
-    cursor: pointer;
-    animation: coinFloat 1.2s ease-in-out infinite alternate;
-}
-
-.coin::after {
-    content: "$";
-    position: absolute;
-    inset: 0;
+    width: 30px;
+    height: 30px;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #986000;
-    font-size: 12px;
-    font-weight: bold;
-    line-height: 1;
+    font-size: 25px;
+    z-index: 3;
+    pointer-events: none;
+    animation: coinFloat 1s ease-in-out infinite alternate;
+    filter: drop-shadow(0 0 4px #ffe36b);
 }
 
 @keyframes coinFloat {
     from { transform: translateY(0); }
-    to { transform: translateY(-4px); }
+    to { transform: translateY(-5px); }
 }
 
-/* PERSONAGEM */
+.element {
+    position: absolute;
+    z-index: 2;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 23px;
+    border: 2px solid white;
+    cursor: pointer;
+}
+
+.fire { left: 25%; top: 20%; background: #ed582e; }
+.water { left: 60%; top: 23%; background: #248bea; }
+.earth { left: 43%; top: 78%; background: #85512b; }
+.ice { left: 76%; top: 27%; background: #70e6ff; }
+.lightning { left: 53%; top: 35%; background: #e7c72c; }
+
 #player {
     position: absolute;
-    z-index: 10;
-    width: 32px;
-    height: 40px;
-    left: 50px;
-    top: 200px;
+    width: 30px;
+    height: 34px;
+    left: 50%;
+    top: 58%;
+    transform: translate(-50%, -50%);
+    background: #168cff;
+    border: 3px solid #d7f0ff;
+    border-radius: 6px;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 21px;
+    user-select: none;
     pointer-events: none;
 }
 
-#spriteCanvas {
-    width: 32px;
-    height: 40px;
-    image-rendering: pixelated;
-    image-rendering: crisp-edges;
-    display: block;
-    filter: drop-shadow(2px 3px 0 #0005);
+#player.metamorpho {
+    background: transparent !important;
+    border: 0 !important;
+    font-size: 30px;
 }
+
+#player.form-fire { filter: drop-shadow(0 0 7px #ff5b21); }
+#player.form-water { filter: drop-shadow(0 0 7px #35caff); }
+#player.form-earth { filter: drop-shadow(0 0 7px #a66b38); }
+#player.form-ice { filter: drop-shadow(0 0 7px #a5f4ff); }
+#player.form-lightning { filter: drop-shadow(0 0 7px #fff36a); }
 
 #message {
-    min-height: 35px;
-    max-width: 850px;
-    margin: 10px auto;
-    padding: 8px;
-    background: #243d2b;
-    border-radius: 7px;
-    color: #f8e6a0;
-    font-size: 14px;
+    min-height: 24px;
+    color: #d8ffd2;
+    margin: 8px;
 }
 
-.actions {
+#actions {
     display: flex;
-    flex-wrap: wrap;
     justify-content: center;
     gap: 8px;
-    margin: 10px auto;
+    flex-wrap: wrap;
+    margin: 10px;
 }
 
-.action-btn {
-    border: 2px solid #779d5e;
-    background: #315536;
+.action {
+    background: #344f3a;
     color: white;
-    padding: 10px 14px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: bold;
+    border: 1px solid #82bd85;
 }
 
-.action-btn:hover {
-    background: #4d7547;
-}
-
-.controls {
+#mobile-controls {
     display: grid;
-    grid-template-columns: 48px 48px 48px;
-    grid-template-rows: 44px 44px;
+    grid-template-columns: repeat(3, 56px);
+    grid-template-rows: repeat(2, 48px);
     gap: 5px;
     justify-content: center;
     margin: 12px auto;
-}
-
-.control-btn {
-    background: #365b3c;
-    border: 2px solid #70965e;
-    border-radius: 8px;
-    color: white;
-    font-size: 22px;
-    font-weight: bold;
     touch-action: none;
-    user-select: none;
 }
 
-.control-btn:active {
-    background: #668d51;
+.move {
+    background: #365c3d;
+    color: white;
+    font-size: 20px;
+    border: 1px solid #9bd39b;
+    user-select: none;
+    touch-action: none;
 }
 
 .up { grid-column: 2; grid-row: 1; }
@@ -331,678 +302,422 @@ button {
 .down { grid-column: 2; grid-row: 2; }
 .right { grid-column: 3; grid-row: 2; }
 
-#backButton {
-    margin: 10px;
-    background: #6b3535;
-    border-color: #b56c6c;
-}
-
-@media (max-width: 500px) {
-    #gameArea {
-        height: 55vh;
-        min-height: 330px;
-    }
-
-    #lake {
-        width: 125px;
-        height: 80px;
-    }
-
-    .stat {
-        padding: 7px;
-        font-size: 12px;
-    }
-
-    .class-grid {
-        grid-template-columns: repeat(3, 1fr);
-    }
-
-    .class-card {
-        font-size: 12px;
-    }
+#back {
+    background: #9cff80;
+    color: #17321b;
+    margin: 8px;
 }
 </style>
 </head>
 
 <body>
+<h1>🌲 Pixel Adventure 🌲</h1>
 
-<header>
-    <h1>⚔️ Pixel Adventure</h1>
-    <p>Escolha sua classe, explore o mapa e colete moedas!</p>
-</header>
-
-<section id="classScreen">
+<section id="menu">
     <h2>Escolha sua classe</h2>
-    <p>Selecione um herói para começar sua aventura.</p>
-    <div class="class-grid" id="classGrid"></div>
+    <p>Selecione uma classe para começar sua aventura.</p>
+    <div id="classes"></div>
+    <p id="class-info">Clique em uma classe para ver os detalhes.</p>
+    <button id="start" disabled>Começar aventura</button>
 </section>
 
-<section id="gameScreen">
-    <div class="hud">
-        <div class="stat">❤️ Vida
-            <span id="hpText">100/100</span>
-            <span class="bar"><span class="fill" id="hpFill"></span></span>
-        </div>
-
-        <div class="stat">💧 Mana
-            <span id="manaText">100/100</span>
-            <span class="bar"><span class="fill" id="manaFill"></span></span>
-        </div>
-
-        <div class="stat">🪙 Moedas: <span id="coinCount">0</span></div>
-        <div class="stat">🧙 Classe: <span id="className">-</span></div>
-        <div class="stat">✨ Forma: <span id="formName">Normal</span></div>
+<section id="game-wrap">
+    <div id="hud">
+        <div class="hud-box">🛡️ <span id="class-name">Aventureiro</span></div>
+        <div class="hud-box">❤️ HP: <span id="hp">100</span>/100</div>
+        <div class="hud-box">🔵 Mana: <span id="mana">100</span>/100</div>
+        <div class="hud-box">🪙 Moedas: <span id="coins">0</span></div>
+        <div class="hud-box">✨ Forma: <span id="form">Normal</span></div>
     </div>
 
-    <div id="gameArea">
-        <div id="gameMap">
-            <div class="path"></div>
-            <div id="lake"></div>
-            <div id="objects"></div>
+    <div id="game">
+        <div class="path"></div>
+        <div class="lake"></div>
 
-            <div id="player">
-                <canvas id="spriteCanvas" width="16" height="20"></canvas>
-            </div>
-        </div>
+        <div class="tree t1 obstacle">🌳</div>
+        <div class="tree t2 obstacle">🌳</div>
+        <div class="tree t3 obstacle">🌳</div>
+        <div class="tree t4 obstacle">🌳</div>
+        <div class="tree t5 obstacle">🌳</div>
+        <div class="tree t6 obstacle">🌳</div>
+
+        <div class="rock r1 obstacle"></div>
+        <div class="rock r2 obstacle"></div>
+
+        <div class="coin" style="left:18%;top:48%">🪙</div>
+        <div class="coin" style="left:42%;top:58%">🪙</div>
+        <div class="coin" style="left:78%;top:58%">🪙</div>
+        <div class="coin" style="left:61%;top:82%">🪙</div>
+        <div class="coin" style="left:8%;top:35%">🪙</div>
+
+        <div class="element fire" data-element="fire" title="Fogo">🔥</div>
+        <div class="element water" data-element="water" title="Água">💧</div>
+        <div class="element earth" data-element="earth" title="Terra">🌱</div>
+        <div class="element ice" data-element="ice" title="Gelo">❄️</div>
+        <div class="element lightning" data-element="lightning" title="Raio">⚡</div>
+
+        <div id="player" aria-label="Jogador"></div>
     </div>
 
-    <div id="message">Explore o mapa e pegue as moedas!</div>
+    <div id="message">Use WASD ou as setas para andar.</div>
 
-    <div class="actions">
-        <button class="action-btn" id="skillButton">✨ Usar habilidade (E)</button>
-        <button class="action-btn" id="collectButton">🪙 Coletar moeda (F)</button>
-        <button class="action-btn" id="backButton">↩ Trocar de classe</button>
+    <div id="actions">
+        <button class="action" data-skill="1">Habilidade 1</button>
+        <button class="action" data-skill="2">Habilidade 2</button>
+        <button class="action" data-skill="3">Habilidade 3</button>
+        <button class="action" id="collect">🪙 Coletar moeda</button>
     </div>
 
-    <p>PC: WASD ou setas para andar • E: habilidade • F: coletar moeda</p>
-
-    <div class="controls">
-        <button class="control-btn up" data-dir="up">▲</button>
-        <button class="control-btn left" data-dir="left">◀</button>
-        <button class="control-btn down" data-dir="down">▼</button>
-        <button class="control-btn right" data-dir="right">▶</button>
+    <div id="mobile-controls">
+        <button class="move up" data-dir="up">⬆️</button>
+        <button class="move left" data-dir="left">⬅️</button>
+        <button class="move down" data-dir="down">⬇️</button>
+        <button class="move right" data-dir="right">➡️</button>
     </div>
+
+    <button id="back">Voltar à seleção de classe</button>
 </section>
 
 <script>
-const classes = [
-    {name:"Guerreiro", icon:"⚔️", color:"#b73d36", hair:"#63351f", accent:"#e3c15b"},
-    {name:"Mago", icon:"🧙", color:"#6049b9", hair:"#35254f", accent:"#65d8ff"},
-    {name:"Ninja", icon:"🥷", color:"#292c3d", hair:"#161822", accent:"#d94c55"},
-    {name:"Arqueiro", icon:"🏹", color:"#36784a", hair:"#56351f", accent:"#c7a76b"},
-    {name:"Paladino", icon:"🛡️", color:"#d0b64c", hair:"#8a642e", accent:"#f4edcf"},
-    {name:"Assassino", icon:"🗡️", color:"#463e54", hair:"#1c1b24", accent:"#ad63c9"},
-    {name:"Cavaleiro das Trevas", icon:"🌑", color:"#35313e", hair:"#17151c", accent:"#b43c59"},
-    {name:"Invocador", icon:"🔮", color:"#77449d", hair:"#43264d", accent:"#80f0d0"},
-    {name:"Berserker", icon:"🪓", color:"#a4432e", hair:"#5a291d", accent:"#e8a348"},
-    {name:"Druida", icon:"🌿", color:"#527c38", hair:"#76502b", accent:"#b6e978"},
-    {name:"Monge", icon:"🥋", color:"#c78d37", hair:"#4a3022", accent:"#fff0c2"},
-    {name:"Metamorfo Elemental", icon:"🌈", color:"#468ba0", hair:"#243d70", accent:"#9cf5ff"}
+const classData = [
+    {name:"Guerreiro",icon:"⚔️",description:"Combatente equilibrado, especialista em ataques físicos.",skills:["Golpe forte","Defesa de ferro","Corte poderoso"]},
+    {name:"Mago",icon:"🧙",description:"Controla energias mágicas e ataca à distância.",skills:["Bola mágica","Escudo arcano","Explosão arcana"]},
+    {name:"Ninja",icon:"🥷",description:"Rápido e furtivo, especialista em movimentos ágeis.",skills:["Corte veloz","Passo das sombras","Ataque surpresa"]},
+    {name:"Arqueiro",icon:"🏹",description:"Ataca de longe com precisão.",skills:["Flecha rápida","Disparo triplo","Chuva de flechas"]},
+    {name:"Paladino",icon:"🛡️",description:"Guerreiro que combina proteção e energia sagrada.",skills:["Golpe sagrado","Barreira divina","Luz purificadora"]},
+    {name:"Assassino",icon:"🗡️",description:"Especialista em ataques rápidos e estratégicos.",skills:["Lâmina veloz","Desaparecer","Ataque preciso"]},
+    {name:"Cavaleiro das Trevas",icon:"🌑",description:"Usa poderes sombrios em combate.",skills:["Corte sombrio","Armadura negra","Eclipse"]},
+    {name:"Invocador",icon:"🔮",description:"Canaliza energia para invocar forças místicas.",skills:["Espírito guardião","Selo místico","Invocação maior"]},
+    {name:"Berserker",icon:"🪓",description:"Lutador agressivo que aposta na força bruta.",skills:["Golpe brutal","Fúria","Impacto devastador"]},
+    {name:"Druida",icon:"🍃",description:"Conecta-se à natureza e às suas energias.",skills:["Raízes","Cura natural","Tempestade verde"]},
+    {name:"Monge",icon:"🥋",description:"Combina disciplina, velocidade e energia interior.",skills:["Punho firme","Concentração","Onda espiritual"]},
+    {name:"Metamorfo Elemental",icon:"🌈",description:"Transforma-se ao entrar em contato com elementos.",skills:["Pulso elemental","Mudança de forma","Explosão elemental"]}
 ];
 
-const classGrid = document.getElementById("classGrid");
-const classScreen = document.getElementById("classScreen");
-const gameScreen = document.getElementById("gameScreen");
-const gameArea = document.getElementById("gameArea");
-const gameMap = document.getElementById("gameMap");
+const menu = document.getElementById("menu");
+const gameWrap = document.getElementById("game-wrap");
+const game = document.getElementById("game");
 const player = document.getElementById("player");
-const canvas = document.getElementById("spriteCanvas");
-const ctx = canvas.getContext("2d");
-const objects = document.getElementById("objects");
+const classContainer = document.getElementById("classes");
+const classInfo = document.getElementById("class-info");
+const startButton = document.getElementById("start");
+const message = document.getElementById("message");
 
 let selectedClass = null;
+let coins = 0;
 let hp = 100;
 let mana = 100;
-let coins = 0;
-let form = "Normal";
-let px = 50;
-let py = 200;
-let direction = "down";
-let walkFrame = 0;
-let moveCounter = 0;
+let x = 0;
+let y = 0;
+let currentForm = "";
+let movementKeys = new Set();
 let lastMoveTime = 0;
-let keys = {};
-let mobileDirection = null;
-let worldObjects = [];
-let coinObjects = [];
-let elementalObjects = [];
-let gameRunning = false;
 
-classes.forEach((c, i) => {
-    const button = document.createElement("button");
-    button.className = "class-card";
-    button.innerHTML = `<span class="emoji">${c.icon}</span>${c.name}`;
-    button.addEventListener("click", () => startGame(i));
-    classGrid.appendChild(button);
+const speed = 3;
+const playerWidth = 30;
+const playerHeight = 34;
+
+const elementInfo = {
+    fire: {name:"Fogo",emoji:"🔥"},
+    water: {name:"Água",emoji:"💧"},
+    earth: {name:"Terra",emoji:"🌱"},
+    ice: {name:"Gelo",emoji:"❄️"},
+    lightning: {name:"Raio",emoji:"⚡"}
+};
+
+classData.forEach(item => {
+    const card = document.createElement("button");
+    card.className = "class-card";
+    card.innerHTML = `<strong>${item.icon} ${item.name}</strong><small>${item.description}</small>`;
+
+    card.addEventListener("click", () => {
+        selectedClass = item;
+        document.querySelectorAll(".class-card").forEach(el => {
+            el.style.borderColor = "#4f8156";
+        });
+        card.style.borderColor = "#d4ff80";
+        classInfo.textContent = item.name + ": " + item.description +
+            " Habilidades: " + item.skills.join(", ") + ".";
+        startButton.disabled = false;
+    });
+
+    classContainer.appendChild(card);
 });
 
-function startGame(index) {
-    selectedClass = classes[index];
-    hp = 100;
-    mana = 100;
-    coins = 0;
-    form = "Normal";
-    px = 50;
-    py = Math.max(60, gameArea.clientHeight * 0.55 - 20);
-    direction = "down";
-    keys = {};
-    mobileDirection = null;
-
-    classScreen.style.display = "none";
-    gameScreen.style.display = "block";
-
-    document.getElementById("className").textContent = selectedClass.name;
-    document.getElementById("message").textContent =
-        "Você escolheu " + selectedClass.name + "! Explore o mapa.";
-
-    createWorld();
-    updateHUD();
-    drawCharacter();
-    positionPlayer();
-
-    gameRunning = true;
-}
-
-function createWorld() {
-    objects.innerHTML = "";
-    worldObjects = [];
-    coinObjects = [];
-    elementalObjects = [];
-
-    const w = gameArea.clientWidth;
-    const h = gameArea.clientHeight;
-
-    // Árvores
-    const treePositions = [
-        [0.08,0.12], [0.25,0.15], [0.43,0.12],
-        [0.15,0.82], [0.38,0.75], [0.60,0.85],
-        [0.80,0.78], [0.91,0.46], [0.05,0.50]
-    ];
-
-    treePositions.forEach(([x,y]) => {
-        addObject("tree", "🌳", x*w, y*h, 38, 44, true);
-    });
-
-    // Pedras
-    [
-        [0.30,0.43], [0.48,0.60], [0.72,0.50],
-        [0.65,0.22], [0.18,0.62]
-    ].forEach(([x,y]) => {
-        addObject("rock", "", x*w, y*h, 29, 23, true);
-    });
-
-    // Moedas redondas
-    [
-        [0.18,0.30], [0.39,0.32], [0.56,0.44],
-        [0.78,0.35], [0.84,0.68]
-    ].forEach(([x,y]) => {
-        const coin = addObject("coin", "", x*w, y*h, 22, 22, false);
-        coinObjects.push(coin);
-    });
-
-    // Elementos para a transformação
-    [
-        ["🔥","Fogo","#e85b34",0.11,0.35],
-        ["💧","Água","#399cdb",0.48,0.18],
-        ["🪨","Terra","#a48b66",0.60,0.68],
-        ["❄️","Gelo","#8deaff",0.89,0.18],
-        ["⚡","Raio","#e6db43",0.89,0.83]
-    ].forEach(([icon,name,color,x,y]) => {
-        const el = addObject("element", icon, x*w, y*h, 38, 38, false);
-        el.name = name;
-        el.color = color;
-        elementalObjects.push(el);
-    });
-}
-
-function addObject(type, text, x, y, width, height, solid) {
-    const el = document.createElement("div");
-    el.className = "object " + type;
-    el.textContent = text;
-    el.style.left = x + "px";
-    el.style.top = y + "px";
-
-    if (type === "element") {
-        el.title = "Elemento " + text;
-    }
-
-    objects.appendChild(el);
-
-    const obj = {
-        el, type, x, y, width, height, solid,
-        collected: false
-    };
-
-    worldObjects.push(obj);
-    return obj;
-}
-
-function positionPlayer() {
-    player.style.left = px + "px";
-    player.style.top = py + "px";
+function showMessage(text) {
+    message.textContent = text;
 }
 
 function updateHUD() {
-    document.getElementById("hpText").textContent = hp + "/100";
-    document.getElementById("manaText").textContent = mana + "/100";
-    document.getElementById("hpFill").style.width = hp + "%";
-    document.getElementById("manaFill").style.width = mana + "%";
-    document.getElementById("coinCount").textContent = coins;
-    document.getElementById("formName").textContent = form;
+    document.getElementById("hp").textContent = hp;
+    document.getElementById("mana").textContent = mana;
+    document.getElementById("coins").textContent = coins;
+    document.getElementById("form").textContent =
+        currentForm ? elementInfo[currentForm].name : "Normal";
 }
 
-function overlaps(ax, ay, aw, ah, bx, by, bw, bh) {
-    return ax < bx + bw &&
-           ax + aw > bx &&
-           ay < by + bh &&
-           ay + ah > by;
+function setPlayerPosition() {
+    player.style.left = x + "px";
+    player.style.top = y + "px";
+    player.style.transform = "none";
 }
 
-function blocked(nx, ny) {
-    const w = gameArea.clientWidth;
-    const h = gameArea.clientHeight;
+function overlaps(a, b) {
+    return a.left < b.right &&
+           a.right > b.left &&
+           a.top < b.bottom &&
+           a.bottom > b.top;
+}
 
-    if (nx < 0 || ny < 0 || nx + 32 > w || ny + 40 > h) {
-        return true;
-    }
+/* Colisão com árvores e pedras */
+function blocked(nextX, nextY) {
+    const p = {
+        left: nextX + 3,
+        top: nextY + 3,
+        right: nextX + playerWidth - 3,
+        bottom: nextY + playerHeight - 2
+    };
 
-    for (const obj of worldObjects) {
-        if (!obj.solid) continue;
+    for (const obj of game.querySelectorAll(".obstacle")) {
+        const left = obj.offsetLeft;
+        const top = obj.offsetTop;
+        let r;
 
-        if (overlaps(
-            nx + 5, ny + 5, 22, 32,
-            obj.x, obj.y, obj.width, obj.height
-        )) {
-            return true;
+        if (obj.classList.contains("tree")) {
+            r = {
+                left: left + 7,
+                top: top + 25,
+                right: left + obj.offsetWidth - 7,
+                bottom: top + obj.offsetHeight
+            };
+        } else if (obj.classList.contains("rock")) {
+            r = {
+                left: left + 3,
+                top: top + 3,
+                right: left + obj.offsetWidth - 3,
+                bottom: top + obj.offsetHeight - 2
+            };
+        } else {
+            continue;
         }
-    }
 
-    // O lago também impede a passagem
-    const lake = document.getElementById("lake");
-    const lakeX = lake.offsetLeft;
-    const lakeY = lake.offsetTop;
-
-    if (overlaps(nx + 5, ny + 5, 22, 32,
-        lakeX, lakeY, lake.offsetWidth, lake.offsetHeight)) {
-        return true;
+        if (overlaps(p, r)) return true;
     }
 
     return false;
 }
 
-function movePlayer(dx, dy) {
-    if (!gameRunning) return;
+/* Transformação do Metamorfo Elemental */
+function updateTransformation() {
+    if (!selectedClass || selectedClass.name !== "Metamorfo Elemental") return;
 
-    if (dx < 0) direction = "left";
-    if (dx > 0) direction = "right";
-    if (dy < 0) direction = "up";
-    if (dy > 0) direction = "down";
+    const p = {
+        left: x,
+        top: y,
+        right: x + playerWidth,
+        bottom: y + playerHeight
+    };
 
-    const speed = 3;
-    const nx = px + dx * speed;
-    const ny = py + dy * speed;
-
-    if (!blocked(nx, py)) px = nx;
-    if (!blocked(px, ny)) py = ny;
-
-    positionPlayer();
-    checkInteractions();
-
-    moveCounter++;
-    if (moveCounter % 5 === 0) {
-        walkFrame = 1 - walkFrame;
-    }
-
-    drawCharacter();
-}
-
-function checkInteractions() {
-    const centerX = px + 16;
-    const centerY = py + 20;
-
-    for (const coin of coinObjects) {
-        if (coin.collected) continue;
-
-        if (overlaps(px, py, 32, 40,
-            coin.x, coin.y, coin.width, coin.height)) {
-            coin.collected = true;
-            coin.el.remove();
-            coins++;
-            document.getElementById("message").textContent =
-                "Você coletou uma moeda! 🪙";
-            updateHUD();
-        }
-    }
-
-    if (selectedClass.name === "Metamorfo Elemental") {
-        for (const el of elementalObjects) {
-            if (overlaps(px, py, 32, 40,
-                el.x, el.y, el.width, el.height)) {
-                if (form !== el.name) {
-                    form = el.name;
-                    document.getElementById("message").textContent =
-                        "Transformação elemental: " + form + "!";
-                    updateHUD();
-                    drawCharacter();
-                }
-            }
-        }
-    }
-}
-
-function drawCharacter() {
-    if (!selectedClass) return;
-
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    let outfit = selectedClass.color;
-    let hair = selectedClass.hair;
-    let accent = selectedClass.accent;
-
-    if (selectedClass.name === "Metamorfo Elemental") {
-        const palettes = {
-            "Fogo": ["#d74425","#6f251d","#ffd14a"],
-            "Água": ["#237ec1","#204d88","#91eaff"],
-            "Terra": ["#80552e","#4b3325","#d4b47b"],
-            "Gelo": ["#8bddec","#477eaa","#ffffff"],
-            "Raio": ["#e6cf2b","#796a1b","#fff7a0"],
-            "Normal": [selectedClass.color,selectedClass.hair,selectedClass.accent]
+    for (const el of game.querySelectorAll(".element")) {
+        const r = {
+            left: el.offsetLeft,
+            top: el.offsetTop,
+            right: el.offsetLeft + el.offsetWidth,
+            bottom: el.offsetTop + el.offsetHeight
         };
 
-        [outfit, hair, accent] = palettes[form] || palettes.Normal;
-    }
+        if (overlaps(p, r)) {
+            const element = el.dataset.element;
 
-    const skin = "#efbd8c";
-    const dark = "#302b35";
-    const facingSide = direction === "left" || direction === "right";
-    const facingUp = direction === "up";
-
-    function rect(x,y,w,h,color) {
-        ctx.fillStyle = color;
-        ctx.fillRect(x,y,w,h);
-    }
-
-    // Sombra
-    rect(3,18,10,2,"#426b34");
-
-    // Pernas com animação simples
-    if (walkFrame === 0) {
-        rect(4,15,4,4,dark);
-        rect(9,15,4,4,dark);
-        rect(3,18,5,2,"#40352b");
-        rect(9,18,5,2,"#40352b");
-    } else {
-        rect(3,15,4,4,dark);
-        rect(10,15,4,4,dark);
-        rect(2,18,5,2,"#40352b");
-        rect(10,18,5,2,"#40352b");
-    }
-
-    // Corpo e roupa
-    rect(3,8,10,8,outfit);
-    rect(2,9,2,5,accent);
-    rect(12,9,2,5,accent);
-    rect(5,8,2,8,accent);
-    rect(9,8,2,8,accent);
-
-    // Cabeça
-    rect(4,3,8,6,skin);
-    rect(3,4,1,4,skin);
-    rect(12,4,1,4,skin);
-
-    // Cabelo ou capuz
-    rect(4,2,8,2,hair);
-    rect(3,3,2,3,hair);
-    rect(11,3,2,2,hair);
-
-    if (selectedClass.name === "Ninja" ||
-        selectedClass.name === "Assassino" ||
-        selectedClass.name === "Cavaleiro das Trevas") {
-        rect(4,4,8,2,hair);
-        rect(4,5,8,1,accent);
-    }
-
-    // Olhos: variam com a direção
-    if (!facingUp) {
-        if (direction === "left") {
-            rect(4,5,1,1,"#ffffff");
-            rect(4,5,1,1,"#292c35");
-        } else if (direction === "right") {
-            rect(11,5,1,1,"#292c35");
-        } else {
-            rect(5,5,2,1,"#292c35");
-            rect(9,5,2,1,"#292c35");
+            if (element !== currentForm) {
+                currentForm = element;
+                player.className = "metamorpho form-" + element;
+                player.textContent = elementInfo[element].emoji;
+                showMessage("Você se transformou em " + elementInfo[element].name + "!");
+                updateHUD();
+            }
+            return;
         }
-    } else {
-        rect(4,3,8,2,hair);
-    }
-
-    // Arma/acessório de cada classe
-    switch (selectedClass.name) {
-        case "Guerreiro":
-        case "Paladino":
-            rect(14,5,1,9,"#d7e3e9");
-            rect(13,5,3,2,accent);
-            rect(14,13,1,3,"#79502d");
-            break;
-
-        case "Mago":
-        case "Invocador":
-            rect(14,3,1,13,"#78542d");
-            rect(13,2,3,3,accent);
-            rect(14,3,1,1,"#ffffff");
-            break;
-
-        case "Ninja":
-        case "Assassino":
-            rect(14,7,1,6,"#d9e4e8");
-            rect(13,7,3,1,accent);
-            break;
-
-        case "Arqueiro":
-            rect(14,5,1,10,"#8a552e");
-            rect(13,5,3,2,accent);
-            rect(14,14,1,2,accent);
-            break;
-
-        case "Cavaleiro das Trevas":
-            rect(3,3,10,2,accent);
-            rect(4,2,2,2,accent);
-            break;
-
-        case "Berserker":
-            rect(14,6,2,7,"#8d9397");
-            rect(13,5,4,3,"#c8cdd0");
-            rect(14,13,2,2,"#6d482b");
-            break;
-
-        case "Druida":
-            rect(3,1,2,3,accent);
-            rect(2,1,4,1,"#4f8c3a");
-            rect(11,1,3,2,"#4f8c3a");
-            break;
-
-        case "Monge":
-            rect(4,7,8,1,accent);
-            rect(6,10,4,2,accent);
-            break;
-
-        case "Metamorfo Elemental":
-            rect(1,6,2,2,accent);
-            rect(13,6,2,2,accent);
-            rect(6,1,4,1,accent);
-            break;
-    }
-
-    // Detalhe especial de transformação
-    if (selectedClass.name === "Metamorfo Elemental" && form !== "Normal") {
-        rect(6,0,4,1,accent);
-        rect(2,7,1,3,accent);
-        rect(13,7,1,3,accent);
-    }
-
-    // Seta de direção discreta
-    if (facingSide) {
-        rect(direction === "left" ? 1 : 14, 10, 1, 2, "#fff2a8");
     }
 }
 
-function useSkill() {
-    if (!gameRunning) return;
-
-    if (mana < 20) {
-        document.getElementById("message").textContent =
-            "Mana insuficiente! Espere um pouco.";
-        return;
-    }
-
-    mana -= 20;
-
-    const descriptions = {
-        "Guerreiro": "Golpe poderoso de espada!",
-        "Mago": "Uma explosão de magia arcana!",
-        "Ninja": "Um movimento veloz nas sombras!",
-        "Arqueiro": "Uma flecha mágica foi disparada!",
-        "Paladino": "Uma onda de luz sagrada!",
-        "Assassino": "Um ataque rápido e preciso!",
-        "Cavaleiro das Trevas": "Uma onda de energia sombria!",
-        "Invocador": "Uma energia mística foi invocada!",
-        "Berserker": "Um golpe de fúria devastador!",
-        "Druida": "A natureza responde ao seu chamado!",
-        "Monge": "Um poderoso golpe concentrado!",
-        "Metamorfo Elemental": "Energia elemental liberada: " + form + "!"
+/* Coleta automática ao encostar nas moedas */
+function collectCoins() {
+    const p = {
+        left: x,
+        top: y,
+        right: x + playerWidth,
+        bottom: y + playerHeight
     };
 
-    document.getElementById("message").textContent =
-        descriptions[selectedClass.name];
+    document.querySelectorAll("#game .coin").forEach(coin => {
+        const r = {
+            left: coin.offsetLeft,
+            top: coin.offsetTop,
+            right: coin.offsetLeft + coin.offsetWidth,
+            bottom: coin.offsetTop + coin.offsetHeight
+        };
 
+        if (overlaps(p, r)) {
+            coin.remove();
+            coins++;
+            updateHUD();
+            showMessage("🪙 Você coletou uma moeda!");
+        }
+    });
+}
+
+function move(dx, dy) {
+    if (!selectedClass || gameWrap.style.display === "none") return;
+
+    const maxX = game.clientWidth - playerWidth;
+    const maxY = game.clientHeight - playerHeight;
+    const nextX = Math.max(0, Math.min(maxX, x + dx));
+    const nextY = Math.max(0, Math.min(maxY, y + dy));
+
+    if (!blocked(nextX, y)) x = nextX;
+    if (!blocked(x, nextY)) y = nextY;
+
+    setPlayerPosition();
+    updateTransformation();
+    collectCoins();
+}
+
+function startGame() {
+    if (!selectedClass) return;
+
+    menu.style.display = "none";
+    gameWrap.style.display = "block";
+
+    document.getElementById("class-name").textContent = selectedClass.name;
+
+    x = (game.clientWidth - playerWidth) / 2;
+    y = (game.clientHeight - playerHeight) / 2;
+
+    player.className = "";
+    player.textContent = selectedClass.icon;
+    player.style.background = "#168cff";
+    player.style.border = "3px solid #d7f0ff";
+
+    if (selectedClass.name === "Metamorfo Elemental") {
+        player.classList.add("metamorpho");
+    }
+
+    currentForm = "";
+    coins = 0;
+    hp = 100;
+    mana = 100;
+
+    setPlayerPosition();
     updateHUD();
+    showMessage("A aventura começou! Explore o mapa e colete as moedas.");
 }
 
-function collectNearestCoin() {
-    if (!gameRunning) return;
+startButton.addEventListener("click", startGame);
 
-    let nearest = null;
-    let nearestDistance = Infinity;
+document.getElementById("back").addEventListener("click", () => {
+    gameWrap.style.display = "none";
+    menu.style.display = "block";
+    movementKeys.clear();
+});
 
-    for (const coin of coinObjects) {
-        if (coin.collected) continue;
+document.addEventListener("keydown", event => {
+    const key = event.key.toLowerCase();
+    const valid = ["arrowup","arrowdown","arrowleft","arrowright","w","a","s","d"];
 
-        const dx = (px + 16) - (coin.x + coin.width / 2);
-        const dy = (py + 20) - (coin.y + coin.height / 2);
-        const distance = Math.sqrt(dx*dx + dy*dy);
-
-        if (distance < nearestDistance) {
-            nearestDistance = distance;
-            nearest = coin;
-        }
+    if (valid.includes(key)) {
+        event.preventDefault();
+        movementKeys.add(key);
     }
-
-    if (nearest && nearestDistance < 85) {
-        nearest.collected = true;
-        nearest.el.remove();
-        coins++;
-        document.getElementById("message").textContent =
-            "Moeda coletada! 🪙";
-        updateHUD();
-    } else {
-        document.getElementById("message").textContent =
-            "Chegue mais perto de uma moeda para coletá-la.";
-    }
-}
-
-document.getElementById("skillButton").addEventListener("click", useSkill);
-document.getElementById("collectButton").addEventListener("click", collectNearestCoin);
-
-document.getElementById("backButton").addEventListener("click", () => {
-    gameRunning = false;
-    keys = {};
-    mobileDirection = null;
-    gameScreen.style.display = "none";
-    classScreen.style.display = "block";
 });
 
-// Teclado
-document.addEventListener("keydown", e => {
-    const key = e.key.toLowerCase();
-
-    if (["arrowup","arrowdown","arrowleft","arrowright"," "].includes(key)) {
-        e.preventDefault();
-    }
-
-    keys[key] = true;
-
-    if (key === "e" && !e.repeat) useSkill();
-    if (key === "f" && !e.repeat) collectNearestCoin();
+document.addEventListener("keyup", event => {
+    movementKeys.delete(event.key.toLowerCase());
 });
 
-document.addEventListener("keyup", e => {
-    keys[e.key.toLowerCase()] = false;
-});
+window.addEventListener("blur", () => movementKeys.clear());
 
-// Controles para celular: funcionam enquanto o botão estiver pressionado
-document.querySelectorAll(".control-btn").forEach(button => {
-    const dir = button.dataset.dir;
-
-    const start = e => {
-        e.preventDefault();
-        mobileDirection = dir;
-    };
-
-    const stop = e => {
-        e.preventDefault();
-        if (mobileDirection === dir) mobileDirection = null;
-    };
-
-    button.addEventListener("pointerdown", start);
-    button.addEventListener("pointerup", stop);
-    button.addEventListener("pointerleave", stop);
-    button.addEventListener("pointercancel", stop);
-});
-
-function gameLoop(timestamp) {
-    if (gameRunning) {
+function movementLoop(timestamp) {
+    if (timestamp - lastMoveTime >= 16) {
         let dx = 0;
         let dy = 0;
 
-        if (keys["arrowleft"] || keys["a"] || mobileDirection === "left") dx--;
-        if (keys["arrowright"] || keys["d"] || mobileDirection === "right") dx++;
-        if (keys["arrowup"] || keys["w"] || mobileDirection === "up") dy--;
-        if (keys["arrowdown"] || keys["s"] || mobileDirection === "down") dy++;
+        if (movementKeys.has("arrowup") || movementKeys.has("w")) dy -= speed;
+        if (movementKeys.has("arrowdown") || movementKeys.has("s")) dy += speed;
+        if (movementKeys.has("arrowleft") || movementKeys.has("a")) dx -= speed;
+        if (movementKeys.has("arrowright") || movementKeys.has("d")) dx += speed;
 
-        if (dx !== 0 && dy !== 0) {
-            dx *= 0.707;
-            dy *= 0.707;
+        if (dx && dy) {
+            dx *= Math.SQRT1_2;
+            dy *= Math.SQRT1_2;
         }
 
-        if (dx !== 0 || dy !== 0) {
-            if (timestamp - lastMoveTime > 45) {
-                movePlayer(dx, dy);
-                lastMoveTime = timestamp;
-            }
-        } else {
-            walkFrame = 0;
-            drawCharacter();
-        }
+        if (dx || dy) move(dx, dy);
+        lastMoveTime = timestamp;
     }
 
-    requestAnimationFrame(gameLoop);
+    requestAnimationFrame(movementLoop);
 }
 
-requestAnimationFrame(gameLoop);
+requestAnimationFrame(movementLoop);
 
-// Ajusta o personagem ao redimensionar a janela
+/* Controles para celular */
+document.querySelectorAll(".move").forEach(button => {
+    const direction = button.dataset.dir;
+    const key = {
+        up: "arrowup",
+        down: "arrowdown",
+        left: "arrowleft",
+        right: "arrowright"
+    }[direction];
+
+    button.addEventListener("pointerdown", event => {
+        event.preventDefault();
+        button.setPointerCapture(event.pointerId);
+        movementKeys.add(key);
+    });
+
+    function release() {
+        movementKeys.delete(key);
+    }
+
+    button.addEventListener("pointerup", release);
+    button.addEventListener("pointercancel", release);
+    button.addEventListener("lostpointercapture", release);
+});
+
+/* Botão extra de moeda continua funcionando */
+document.getElementById("collect").addEventListener("click", () => {
+    coins++;
+    updateHUD();
+    showMessage("🪙 Você recebeu uma moeda!");
+});
+
+/* Habilidades demonstrativas */
+document.querySelectorAll("[data-skill]").forEach(button => {
+    button.addEventListener("click", () => {
+        if (!selectedClass) return;
+
+        if (mana < 10) {
+            showMessage("Mana insuficiente!");
+            return;
+        }
+
+        mana -= 10;
+        updateHUD();
+
+        const skill = selectedClass.skills[Number(button.dataset.skill) - 1];
+        showMessage(skill + " ativada! (Combate ainda não implementado.)");
+    });
+});
+
 window.addEventListener("resize", () => {
-    if (!gameRunning) return;
+    if (gameWrap.style.display === "none") return;
 
-    px = Math.min(px, gameArea.clientWidth - 32);
-    py = Math.min(py, gameArea.clientHeight - 40);
-
-    createWorld();
-    positionPlayer();
-    drawCharacter();
+    x = Math.max(0, Math.min(x, game.clientWidth - playerWidth));
+    y = Math.max(0, Math.min(y, game.clientHeight - playerHeight));
+    setPlayerPosition();
 });
 </script>
-
 </body>
 </html>
