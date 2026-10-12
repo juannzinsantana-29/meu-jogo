@@ -3,486 +3,321 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pixel Adventure</title>
-
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pixel Adventure RPG</title>
 <style>
-* {
-    box-sizing: border-box;
-}
-
-body {
-    margin: 0;
-    padding: 15px;
-    background: #202820;
-    color: white;
-    font-family: Arial, sans-serif;
-    text-align: center;
-}
-
-h1 {
-    color: #f5d76e;
-    margin: 10px 0 15px;
-}
-
-#game {
-    position: relative;
-    width: 900px;
-    max-width: 95vw;
-    height: min(550px, 85vh);
-    min-height: 400px;
-    margin: 0 auto;
-    overflow: hidden;
-    background: #6b8e23;
-    border: 4px solid #3c5220;
-    border-radius: 8px;
-}
-
-.path {
-    position: absolute;
-    left: 0;
-    top: 45%;
-    width: 100%;
-    height: 70px;
-    background: #c2a16a;
-    z-index: 1;
-}
-
-.lake {
-    position: absolute;
-    right: 8%;
-    top: 10%;
-    width: 160px;
-    height: 100px;
-    background: #3498db;
-    border: 5px solid #2471a3;
-    border-radius: 50%;
-    z-index: 2;
-}
-
-.tree {
-    position: absolute;
-    width: 50px;
-    height: 50px;
-    font-size: 42px;
-    line-height: 50px;
-    text-align: center;
-    z-index: 4;
-}
-
-.tree1 {
-    left: 10%;
-    top: 15%;
-}
-
-.tree2 {
-    left: 25%;
-    bottom: 10%;
-}
-
-.tree3 {
-    right: 20%;
-    bottom: 15%;
-}
-
-.rock {
-    position: absolute;
-    width: 40px;
-    height: 32px;
-    background: linear-gradient(145deg, #d0d5d8, #858e95 60%, #626b72);
-    border: 3px solid #505960;
-    border-radius: 45% 55% 35% 40%;
-    box-shadow: inset -4px -3px 0 #626b72;
-    z-index: 4;
-}
-
-.rock1 {
-    left: 42%;
-    top: 20%;
-}
-
-.rock2 {
-    right: 35%;
-    bottom: 12%;
-}
-
-.coin {
-    position: absolute;
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 3;
-}
-
-.coin span {
-    display: block;
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    background: radial-gradient(
-        circle at 30% 25%,
-        #fff3a0,
-        #ffc928 55%,
-        #c98208
-    );
-    border: 3px solid #a96c08;
-    box-shadow: 0 2px 0 #80530b;
-}
-
-.coin1 {
-    left: 150px;
-    top: 180px;
-}
-
-.coin2 {
-    left: 300px;
-    top: 300px;
-}
-
-.coin3 {
-    right: 150px;
-    top: 220px;
-}
-
-.coin4 {
-    right: 300px;
-    top: 100px;
-}
-
-.coin5 {
-    left: 400px;
-    bottom: 60px;
-}
-
-#player {
-    position: absolute;
-    width: 46px;
-    height: 46px;
-    background: #19baff;
-    border: 3px solid #2471a3;
-    border-radius: 8px;
-    z-index: 5;
-}
-
-#hud {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    padding: 8px 12px;
-    background: rgba(0, 0, 0, 0.75);
-    border-radius: 8px;
-    text-align: left;
-    line-height: 1.6;
-    z-index: 10;
-}
-
-#controls {
-    display: grid;
-    grid-template-columns: repeat(3, 60px);
-    grid-template-rows: repeat(2, 55px);
-    justify-content: center;
-    gap: 5px;
-    margin: 15px auto;
-}
-
-#controls button {
-    font-size: 24px;
-    border: none;
-    border-radius: 10px;
-    background: #f5d76e;
-    cursor: pointer;
-    touch-action: manipulation;
-}
-
-#controls button:active {
-    background: #e0b832;
-}
-
-#up {
-    grid-column: 2;
-    grid-row: 1;
-}
-
-#left {
-    grid-column: 1;
-    grid-row: 2;
-}
-
-#down {
-    grid-column: 2;
-    grid-row: 2;
-}
-
-#right {
-    grid-column: 3;
-    grid-row: 2;
-}
-
-.instructions {
-    color: #ddd;
-    font-size: 14px;
-}
-
-@media (max-width: 600px) {
-    body {
-        padding: 8px;
-    }
-
-    #game {
-        width: 100%;
-        height: 65vh;
-        min-height: 400px;
-    }
-}
+*{box-sizing:border-box}
+body{margin:0;background:#171b24;color:#fff;font-family:Arial,sans-serif;text-align:center;padding:14px}
+h1{color:#f5d76e}
+button{cursor:pointer;border:0;border-radius:8px;padding:10px 14px;font-weight:bold;background:#f5d76e;color:#211b10}
+button:hover{filter:brightness(1.1)}
+.panel{max-width:900px;margin:14px auto;background:#252c39;border:2px solid #46516a;border-radius:12px;padding:16px}
+#classes{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px}
+.classCard{background:#343d50;color:white;border:2px solid #56647d;padding:12px;min-height:110px}
+.classCard.selected{border-color:#f5d76e;background:#49445b}
+.classCard strong{display:block;font-size:16px;margin-bottom:8px}
+#game{position:relative;width:900px;max-width:95vw;height:550px;max-height:65vh;min-height:400px;margin:auto;overflow:hidden;background:#6b8e23;border:4px solid #3c5220;border-radius:8px}
+.path{position:absolute;left:0;top:45%;width:100%;height:70px;background:#c2a16a}
+.lake{position:absolute;right:8%;top:10%;width:150px;height:95px;background:#3498db;border:5px solid #2471a3;border-radius:50%}
+.tree{position:absolute;font-size:40px;z-index:3}
+.t1{left:10%;top:15%}.t2{left:25%;bottom:10%}.t3{right:20%;bottom:15%}
+.rock{position:absolute;width:40px;height:32px;background:linear-gradient(145deg,#d0d5d8,#626b72);border:3px solid #505960;border-radius:45% 55% 35% 40%;z-index:4}
+.r1{left:42%;top:20%}.r2{right:35%;bottom:12%}
+.coin{position:absolute;width:25px;height:25px;border-radius:50%;background:radial-gradient(circle at 30% 25%,#fff3a0,#ffc928 60%,#c98208);border:3px solid #a96c08;z-index:3}
+.c1{left:150px;top:180px}.c2{left:300px;top:300px}.c3{right:150px;top:220px}.c4{right:300px;top:100px}.c5{left:400px;bottom:60px}
+#player{position:absolute;width:38px;height:44px;left:30px;top:30px;border:3px solid #20152f;border-radius:8px 8px 5px 5px;background:#692da8;z-index:5;box-shadow:inset 0 -10px #20152f}
+#player:before{content:"";position:absolute;left:5px;top:5px;width:22px;height:12px;background:#15151b;border-radius:5px}
+#player:after{content:"";position:absolute;left:9px;top:10px;width:4px;height:4px;background:#fff}
+#player.fire{background:#f15a24;box-shadow:inset 0 -10px #8f2017,0 0 12px #ff7b18}
+#player.water{background:#249fe5;box-shadow:inset 0 -10px #125baf,0 0 12px #70dcff}
+#player.earth{background:#a36d3d;box-shadow:inset 0 -10px #624024}
+#player.ice{background:#a5f3ff;box-shadow:inset 0 -10px #499fc9,0 0 12px #a5f3ff}
+#player.lightning{background:#ffe34a;box-shadow:inset 0 -10px #bb8a19,0 0 12px #fff28a}
+#hud{position:absolute;top:8px;left:8px;text-align:left;background:#171b24dd;padding:8px 10px;border-radius:8px;z-index:10;line-height:1.5;font-size:13px}
+#controls{display:grid;grid-template-columns:repeat(3,58px);grid-template-rows:repeat(2,48px);gap:5px;justify-content:center;margin:12px}
+#controls button{font-size:20px;padding:5px;touch-action:manipulation}
+#up{grid-column:2}#left{grid-column:1;grid-row:2}#down{grid-column:2;grid-row:2}#right{grid-column:3;grid-row:2}
+#gameArea[hidden],#selection[hidden]{display:none}
+#status{line-height:1.8}
+#abilityButtons{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+#message{min-height:24px;color:#ffe58b}
+small{color:#d2d8e3}
+@media(max-width:600px){#game{height:60vh;min-height:400px}.panel{padding:10px}}
 </style>
 </head>
-
 <body>
+<h1>⚔️ PIXEL ADVENTURE RPG</h1>
 
-<h1>🎮 Pixel Adventure</h1>
+<section id="selection" class="panel">
+<h2>Escolha sua classe</h2>
+<p>Esta escolha define seu personagem durante a aventura.</p>
+<div id="classes"></div>
+<div id="classInfo" class="panel">
+Escolha uma classe para conhecer seus poderes.
+</div>
+<button id="startButton" disabled>Começar aventura!</button>
+</section>
 
+<section id="gameArea" hidden>
+<div class="panel" id="status"></div>
 <div id="game">
+<div class="path"></div>
+<div class="lake" data-element="water" title="Água"></div>
+<div class="tree t1">🌳</div>
+<div class="tree t2">🌳</div>
+<div class="tree t3">🌳</div>
+<div class="rock r1 obstacle"></div>
+<div class="rock r2 obstacle"></div>
 
-    <div class="path"></div>
-    <div class="lake"></div>
+<div class="coin c1"></div>
+<div class="coin c2"></div>
+<div class="coin c3"></div>
+<div class="coin c4"></div>
+<div class="coin c5"></div>
 
-    <div class="tree tree1">🌳</div>
-    <div class="tree tree2">🌳</div>
-    <div class="tree tree3">🌳</div>
+<div id="elementFire" data-element="fire" title="Fogo" style="position:absolute;left:60%;top:65%;font-size:30px;cursor:pointer;z-index:4">🔥</div>
+<div id="elementWater" data-element="water" title="Água" style="position:absolute;left:75%;top:48%;font-size:30px;cursor:pointer;z-index:4">💧</div>
+<div id="elementEarth" data-element="earth" title="Terra" style="position:absolute;left:15%;top:65%;font-size:30px;cursor:pointer;z-index:4">🪨</div>
+<div id="elementIce" data-element="ice" title="Gelo" style="position:absolute;left:50%;top:12%;font-size:30px;cursor:pointer;z-index:4">❄️</div>
+<div id="elementLightning" data-element="lightning" title="Raio" style="position:absolute;left:83%;top:70%;font-size:30px;cursor:pointer;z-index:4">⚡</div>
 
-    <div class="rock rock1 obstacle"></div>
-    <div class="rock rock2 obstacle"></div>
-
-    <div class="coin coin1"><span></span></div>
-    <div class="coin coin2"><span></span></div>
-    <div class="coin coin3"><span></span></div>
-    <div class="coin coin4"><span></span></div>
-    <div class="coin coin5"><span></span></div>
-
-    <div id="hud">
-        🪙 Moedas: <span id="coinCount">0</span>/5
-        <br>
-        📍 Explore o mapa!
-    </div>
-
-    <div id="player"></div>
-
+<div id="hud">
+🪙 Moedas: <span id="coinCount">0</span>/5<br>
+Classe: <span id="hudClass">-</span><br>
+Forma: <span id="hudElement">Normal</span>
+</div>
+<div id="player"></div>
 </div>
 
 <div id="controls">
-    <button id="up" aria-label="Cima">⬆️</button>
-    <button id="left" aria-label="Esquerda">⬅️</button>
-    <button id="down" aria-label="Baixo">⬇️</button>
-    <button id="right" aria-label="Direita">➡️</button>
+<button id="up">⬆️</button>
+<button id="left">⬅️</button>
+<button id="down">⬇️</button>
+<button id="right">➡️</button>
 </div>
 
-<p class="instructions">
-    Use as setas do teclado ou os botões para se movimentar.
-    <br>
-    Colete todas as moedas e explore o mapa!
-</p>
+<div class="panel">
+<h3>Habilidades</h3>
+<div id="abilityButtons"></div>
+<p id="message">Explore o mapa e encontre os elementos!</p>
+<small>Use WASD ou as setas para andar. Encoste nos elementos para absorvê-los.</small>
+</div>
+</section>
 
 <script>
+const classList = [
+{name:"Guerreiro",weapon:"Espada",power:"Golpe poderoso",hp:140,mana:50,color:"#692da8",desc:"Forte no combate corpo a corpo.",skills:["Corte pesado","Investida","Defesa de aço"]},
+{name:"Mago",weapon:"Cajado",power:"Magia arcana",hp:80,mana:140,color:"#4169e1",desc:"Usa magia para atacar de longe.",skills:["Projétil arcano","Explosão mágica","Escudo místico"]},
+{name:"Ninja",weapon:"Adagas",power:"Sombras",hp:90,mana:80,color:"#303044",desc:"Rápido e difícil de alcançar.",skills:["Corte veloz","Passo sombrio","Combo furtivo"]},
+{name:"Arqueiro",weapon:"Arco",power:"Precisão",hp:100,mana:70,color:"#347a42",desc:"Ataca de longe com grande precisão.",skills:["Flecha precisa","Rajada de flechas","Disparo perfurante"]},
+{name:"Paladino",weapon:"Espada e escudo",power:"Luz",hp:150,mana:90,color:"#c4a34b",desc:"Resiste ao dano e protege aliados.",skills:["Golpe sagrado","Luz curativa","Escudo divino"]},
+{name:"Assassino",weapon:"Lâminas",power:"Crítico",hp:85,mana:80,color:"#772d3d",desc:"Especialista em velocidade e ataques precisos.",skills:["Ataque surpresa","Passo rápido","Lâmina mortal"]},
+{name:"Cavaleiro das Trevas",weapon:"Espadão",power:"Sombras",hp:145,mana:80,color:"#40294e",desc:"Combina força com energia sombria.",skills:["Corte sombrio","Drenar energia","Eclipse"]},
+{name:"Invocador",weapon:"Grimório",power:"Invocação",hp:90,mana:150,color:"#7445a8",desc:"Invoca espíritos para lutar ao seu lado.",skills:["Espírito guardião","Invocar familiar","Legião espectral"]},
+{name:"Berserker",weapon:"Machado",power:"Fúria",hp:160,mana:40,color:"#a33a32",desc:"Desfere golpes brutais.",skills:["Machadada","Fúria crescente","Impacto colossal"]},
+{name:"Druida",weapon:"Cajado natural",power:"Natureza",hp:110,mana:130,color:"#39834b",desc:"Manipula plantas e energia natural.",skills:["Raízes","Cura natural","Espinhos selvagens"]},
+{name:"Monge",weapon:"Punhos",power:"Energia",hp:115,mana:90,color:"#bd7134",desc:"Luta com combos e técnicas de energia.",skills:["Punho veloz","Onda de energia","Combo espiritual"]},
+{name:"Metamorfo Elemental",weapon:"Corpo elemental",power:"Transformação",hp:110,mana:100,color:"#29243a",desc:"Muda de forma ao tocar fogo, água, terra, gelo ou raio.",skills:["Pulso elemental","Explosão elemental","Forma suprema"]}
+];
+
+let chosenClass = null;
+let coins = 0;
+let hp = 100;
+let mana = 100;
+let playerX = 30, playerY = 30;
+let element = "normal";
+const collected = new Set();
+const keys = {};
 const game = document.getElementById("game");
 const player = document.getElementById("player");
-const coinCount = document.getElementById("coinCount");
+const message = document.getElementById("message");
 
-const speed = 5;
+const classContainer = document.getElementById("classes");
+const info = document.getElementById("classInfo");
+const startButton = document.getElementById("startButton");
 
-let playerX = 30;
-let playerY = 30;
-let coinsCollected = 0;
+classList.forEach((c, index) => {
+    const btn = document.createElement("button");
+    btn.className = "classCard";
+    btn.innerHTML = `<strong>${c.name}</strong><small>${c.weapon}</small><br><small>❤️ ${c.hp} · ✨ ${c.mana}</small>`;
+    btn.addEventListener("click", () => {
+        chosenClass = c;
+        document.querySelectorAll(".classCard").forEach(b => b.classList.remove("selected"));
+        btn.classList.add("selected");
+        info.innerHTML = `<h3>${c.name}</h3><p>${c.desc}</p><p>Arma: ${c.weapon}</p><p>Especialidade: ${c.power}</p><p>Vida: ${c.hp} | Mana: ${c.mana}</p><p>Habilidades: ${c.skills.join(" • ")}</p>`;
+        startButton.disabled = false;
+    });
+    classContainer.appendChild(btn);
+});
 
-const keys = {
-    ArrowUp: false,
-    ArrowDown: false,
-    ArrowLeft: false,
-    ArrowRight: false,
-    w: false,
-    a: false,
-    s: false,
-    d: false
-};
+startButton.addEventListener("click", () => {
+    document.getElementById("selection").hidden = true;
+    document.getElementById("gameArea").hidden = false;
+    hp = chosenClass.hp;
+    mana = chosenClass.mana;
+    player.style.background = chosenClass.color;
+    document.getElementById("hudClass").textContent = chosenClass.name;
+    createAbilities();
+    updatePlayer();
+    updateStatus();
+    message.textContent = "A aventura começou! Encontre moedas e elementos.";
+});
 
-const collectedCoins = new Set();
+function createAbilities() {
+    const area = document.getElementById("abilityButtons");
+    area.innerHTML = "";
+    chosenClass.skills.forEach((skill, i) => {
+        const btn = document.createElement("button");
+        btn.textContent = `${i+1}. ${skill}`;
+        btn.addEventListener("click", () => useAbility(i));
+        area.appendChild(btn);
+    });
+}
+
+function useAbility(index) {
+    if (!chosenClass) return;
+    const cost = [8, 15, 25][index] || 10;
+    if (mana < cost) {
+        message.textContent = "Mana insuficiente!";
+        return;
+    }
+    mana -= cost;
+    updateStatus();
+
+    if (chosenClass.name === "Metamorfo Elemental") {
+        message.textContent = ["Você libera um pulso da sua forma atual!","Uma explosão elemental irrompe ao seu redor!","Você libera todo o poder elemental acumulado!"][index];
+    } else {
+        message.textContent = chosenClass.name + " usou: " + chosenClass.skills[index] + "!";
+    }
+}
+
+function updateStatus() {
+    document.getElementById("status").innerHTML =
+        `<strong>${chosenClass.name}</strong> — ${chosenClass.desc}<br>❤️ Vida: ${hp}/${chosenClass.hp} &nbsp; | &nbsp; ✨ Mana: ${mana}/${chosenClass.mana}`;
+}
 
 function updatePlayer() {
     player.style.left = playerX + "px";
     player.style.top = playerY + "px";
 }
 
-function overlaps(a, b) {
-    return !(
-        a.right <= b.left ||
-        a.left >= b.right ||
-        a.bottom <= b.top ||
-        a.top >= b.bottom
-    );
+function overlaps(a,b) {
+    return !(a.right <= b.left || a.left >= b.right || a.bottom <= b.top || a.top >= b.bottom);
 }
 
-function isBlocked(nextX, nextY) {
-    const playerRect = {
-        left: nextX,
-        top: nextY,
-        right: nextX + player.offsetWidth,
-        bottom: nextY + player.offsetHeight
-    };
-
-    const obstacles = game.querySelectorAll(".obstacle");
-
-    for (const obstacle of obstacles) {
-        const rect = {
-            left: obstacle.offsetLeft,
-            top: obstacle.offsetTop,
-            right: obstacle.offsetLeft + obstacle.offsetWidth,
-            bottom: obstacle.offsetTop + obstacle.offsetHeight
-        };
-
-        if (overlaps(playerRect, rect)) {
-            return true;
-        }
+function blocked(x,y) {
+    const p = {left:x,top:y,right:x+player.offsetWidth,bottom:y+player.offsetHeight};
+    for (const obj of game.querySelectorAll(".obstacle")) {
+        const r = {left:obj.offsetLeft,top:obj.offsetTop,right:obj.offsetLeft+obj.offsetWidth,bottom:obj.offsetTop+obj.offsetHeight};
+        if (overlaps(p,r)) return true;
     }
-
     return false;
 }
 
 function collectCoins() {
-    const coins = game.querySelectorAll(".coin");
-
-    coins.forEach((coin, index) => {
-        if (collectedCoins.has(index)) return;
-
-        const playerRect = {
-            left: playerX,
-            top: playerY,
-            right: playerX + player.offsetWidth,
-            bottom: playerY + player.offsetHeight
-        };
-
-        const coinRect = {
-            left: coin.offsetLeft,
-            top: coin.offsetTop,
-            right: coin.offsetLeft + coin.offsetWidth,
-            bottom: coin.offsetTop + coin.offsetHeight
-        };
-
-        if (overlaps(playerRect, coinRect)) {
-            collectedCoins.add(index);
+    game.querySelectorAll(".coin").forEach((coin,i) => {
+        if (collected.has(i)) return;
+        const p = {left:playerX,top:playerY,right:playerX+player.offsetWidth,bottom:playerY+player.offsetHeight};
+        const r = {left:coin.offsetLeft,top:coin.offsetTop,right:coin.offsetLeft+coin.offsetWidth,bottom:coin.offsetTop+coin.offsetHeight};
+        if (overlaps(p,r)) {
+            collected.add(i);
             coin.style.display = "none";
-
-            coinsCollected++;
-            coinCount.textContent = coinsCollected;
-
-            if (coinsCollected === 5) {
-                setTimeout(() => {
-                    alert("Parabéns! Você coletou todas as moedas! 🎉");
-                }, 100);
-            }
+            coins++;
+            document.getElementById("coinCount").textContent = coins;
+            if (coins === 5) message.textContent = "Parabéns! Você coletou todas as moedas! 🎉";
         }
     });
 }
 
-function move(dx, dy) {
-    const maxX = game.clientWidth - player.offsetWidth;
-    const maxY = game.clientHeight - player.offsetHeight;
-
-    const nextX = Math.max(0, Math.min(maxX, playerX + dx));
-    const nextY = Math.max(0, Math.min(maxY, playerY + dy));
-
-    if (!isBlocked(nextX, playerY)) {
-        playerX = nextX;
-    }
-
-    if (!isBlocked(playerX, nextY)) {
-        playerY = nextY;
-    }
-
-    updatePlayer();
-    collectCoins();
-}
-
-document.addEventListener("keydown", event => {
-    const key = event.key.length === 1
-        ? event.key.toLowerCase()
-        : event.key;
-
-    if (key in keys) {
-        keys[key] = true;
-        event.preventDefault();
-    }
-});
-
-document.addEventListener("keyup", event => {
-    const key = event.key.length === 1
-        ? event.key.toLowerCase()
-        : event.key;
-
-    if (key in keys) {
-        keys[key] = false;
-    }
-});
-
-function gameLoop() {
-    let dx = 0;
-    let dy = 0;
-
-    if (keys.ArrowUp || keys.w) dy -= speed;
-    if (keys.ArrowDown || keys.s) dy += speed;
-    if (keys.ArrowLeft || keys.a) dx -= speed;
-    if (keys.ArrowRight || keys.d) dx += speed;
-
-    if (dx !== 0 && dy !== 0) {
-        dx *= Math.SQRT1_2;
-        dy *= Math.SQRT1_2;
-    }
-
-    if (dx !== 0 || dy !== 0) {
-        move(dx, dy);
-    }
-
-    requestAnimationFrame(gameLoop);
-}
-
-function setupButton(id, dx, dy) {
-    const button = document.getElementById(id);
-
-    let interval = null;
-
-    function startMoving(event) {
-        event.preventDefault();
-
-        if (interval !== null) return;
-
-        move(dx * speed, dy * speed);
-
-        interval = setInterval(() => {
-            move(dx * speed, dy * speed);
-        }, 40);
-    }
-
-    function stopMoving() {
-        if (interval !== null) {
-            clearInterval(interval);
-            interval = null;
+function checkElements() {
+    if (chosenClass.name !== "Metamorfo Elemental") return;
+    const p = {left:playerX,top:playerY,right:playerX+player.offsetWidth,bottom:playerY+player.offsetHeight};
+    for (const obj of game.querySelectorAll("[data-element]")) {
+        const r = {left:obj.offsetLeft,top:obj.offsetTop,right:obj.offsetLeft+obj.offsetWidth,bottom:obj.offsetTop+obj.offsetHeight};
+        if (overlaps(p,r)) {
+            const next = obj.dataset.element;
+            if (element !== next) {
+                element = next;
+                player.className = "";
+                player.classList.add(next);
+                document.getElementById("hudElement").textContent = ({
+                    fire:"Fogo 🔥",water:"Água 💧",earth:"Terra 🪨",ice:"Gelo ❄️",lightning:"Raio ⚡"
+                })[next];
+                message.textContent = "Transformação elemental: " + next + "!";
+            }
         }
     }
-
-    button.addEventListener("pointerdown", startMoving);
-    button.addEventListener("pointerup", stopMoving);
-    button.addEventListener("pointerleave", stopMoving);
-    button.addEventListener("pointercancel", stopMoving);
 }
 
-setupButton("up", 0, -1);
-setupButton("down", 0, 1);
-setupButton("left", -1, 0);
-setupButton("right", 1, 0);
+function move(dx,dy) {
+    const maxX = game.clientWidth-player.offsetWidth;
+    const maxY = game.clientHeight-player.offsetHeight;
+    const nx = Math.max(0,Math.min(maxX,playerX+dx));
+    const ny = Math.max(0,Math.min(maxY,playerY+dy));
+    if (!blocked(nx,playerY)) playerX=nx;
+    if (!blocked(playerX,ny)) playerY=ny;
+    updatePlayer();
+    collectCoins();
+    checkElements();
+}
 
-updatePlayer();
-gameLoop();
+document.addEventListener("keydown", e => {
+    const k = e.key.length===1 ? e.key.toLowerCase() : e.key;
+    if (["ArrowUp","ArrowDown","ArrowLeft","ArrowRight","w","a","s","d"].includes(k)) {
+        keys[k]=true;
+        e.preventDefault();
+    }
+});
+document.addEventListener("keyup", e => {
+    const k = e.key.length===1 ? e.key.toLowerCase() : e.key;
+    keys[k]=false;
+});
+
+function loop() {
+    if (!document.getElementById("gameArea").hidden) {
+        let dx=0,dy=0;
+        if(keys.ArrowUp||keys.w) dy-=4;
+        if(keys.ArrowDown||keys.s) dy+=4;
+        if(keys.ArrowLeft||keys.a) dx-=4;
+        if(keys.ArrowRight||keys.d) dx+=4;
+        if(dx && dy){dx*=0.707;dy*=0.707;}
+        if(dx||dy) move(dx,dy);
+    }
+    requestAnimationFrame(loop);
+}
+
+function setupButton(id,dx,dy) {
+    const btn=document.getElementById(id);
+    let timer=null;
+    function start(e){
+        e.preventDefault();
+        if(timer) return;
+        move(dx*4,dy*4);
+        timer=setInterval(()=>move(dx*4,dy*4),40);
+    }
+    function stop(){if(timer){clearInterval(timer);timer=null;}}
+    btn.addEventListener("pointerdown",start);
+    ["pointerup","pointerleave","pointercancel"].forEach(ev=>btn.addEventListener(ev,stop));
+}
+setupButton("up",0,-1);
+setupButton("down",0,1);
+setupButton("left",-1,0);
+setupButton("right",1,0);
+
+game.querySelectorAll("[data-element]").forEach(obj => {
+    obj.addEventListener("click", () => {
+        if (chosenClass && chosenClass.name === "Metamorfo Elemental") {
+            element = obj.dataset.element;
+            player.className = "";
+            player.classList.add(element);
+            document.getElementById("hudElement").textContent = element;
+            message.textContent = "Você absorveu o elemento: " + element + "!";
+        }
+    });
+});
+
+loop();
 </script>
-
 </body>
 </html>
+
