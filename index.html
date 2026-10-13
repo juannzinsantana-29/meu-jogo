@@ -1,285 +1,734 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Pixel Adventure</title>
+
 <style>
-*{box-sizing:border-box}
-body{margin:0;background:#17251c;color:white;font-family:Arial,sans-serif;text-align:center}
-h1{margin:12px 0;color:#9cff80;text-shadow:2px 2px #23472b}
-#menu{padding:16px}
-#classes{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;max-width:900px;margin:15px auto}
-.class-card{background:#263d2d;border:2px solid #4f8156;color:white;padding:12px;border-radius:10px;cursor:pointer}
-.class-card:hover{background:#3b6043;border-color:#a5ff91}
-.class-card strong{display:block;margin-bottom:6px}
-.class-card small{color:#d0e8d3}
-button{cursor:pointer;border:0;border-radius:8px;padding:10px 14px;font-weight:bold}
-#start,#back{background:#9cff80;color:#17321b;margin:10px}
-#start{font-size:16px}
-#start:disabled{opacity:.5;cursor:not-allowed}
-#game-wrap{display:none;padding:8px}
-#hud{display:flex;justify-content:center;flex-wrap:wrap;gap:8px;margin:8px auto;max-width:900px}
-.hud-box{background:#263d2d;border:1px solid #6d9b71;border-radius:8px;padding:8px 12px}
-#game{position:relative;width:min(900px,96vw);height:min(540px,62vh);min-height:360px;margin:0 auto;overflow:hidden;border:4px solid #6a482c;border-radius:8px;background:radial-gradient(ellipse at 20% 20%,#5da64c 0 4%,transparent 5%),radial-gradient(ellipse at 70% 60%,#4c9845 0 5%,transparent 6%),#4e9b43;touch-action:none}
-.path{position:absolute;left:0;top:68%;width:100%;height:70px;background:#b79a63;border-top:5px solid #8f7549;border-bottom:5px solid #8f7549;z-index:1;pointer-events:none}
-.lake{position:absolute;width:155px;height:95px;right:8%;top:12%;border-radius:50%;background:#3da9e8;border:6px solid #83d8f4;z-index:1;pointer-events:none}
-.tree{position:absolute;width:50px;height:58px;font-size:40px;line-height:50px;text-align:center;z-index:4;user-select:none;pointer-events:none}
-.t1{left:15%;top:15%}.t2{left:35%;top:38%}.t3{left:70%;top:43%}.t4{left:48%;top:12%}.t5{left:12%;top:76%}.t6{left:82%;top:77%}
-.rock{position:absolute;width:35px;height:27px;z-index:4;pointer-events:none;background:linear-gradient(145deg,#c7c7bd,#85877f 60%,#55584f);border:2px solid #686a62;border-radius:45% 55% 38% 42%;box-shadow:inset -4px -3px 0 #6b6d65;transform:rotate(-12deg)}
-.rock:after{content:"";position:absolute;width:12px;height:7px;top:5px;left:6px;background:#deded5;border-radius:50%;transform:rotate(-20deg)}
-.r1{left:56%;top:53%}.r2{left:28%;top:76%}
-.coin{position:absolute;width:18px;height:18px;background:radial-gradient(circle at 30% 30%,#fff176,#ffc107 60%,#d99000);border:3px solid #ffe082;border-radius:50%;box-shadow:0 0 8px #ffd54f;z-index:5;animation:coinFloat .6s ease-in-out infinite alternate}
-.coin:after{content:"$";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#9b6500;font-size:11px;font-weight:bold}
-@keyframes coinFloat{to{translate:0 -4px}}
-.element{position:absolute;z-index:2;width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:23px;border:2px solid white;cursor:pointer}
-.fire{left:25%;top:20%;background:#ed582e}.water{left:60%;top:23%;background:#248bea}.earth{left:43%;top:78%;background:#85512b}.ice{left:76%;top:27%;background:#70e6ff}.lightning{left:53%;top:35%;background:#e7c72c}
-#player{position:absolute;width:32px;height:40px;left:50%;top:58%;transform:translate(-50%,-50%);z-index:6;user-select:none;pointer-events:none;background:transparent;border:0;border-radius:0}
-#spriteCanvas{display:block;width:32px;height:40px;image-rendering:pixelated}
-#player.form-fire{filter:drop-shadow(0 0 7px #ff5b21)}
-#player.form-water{filter:drop-shadow(0 0 7px #35caff)}
-#player.form-earth{filter:drop-shadow(0 0 7px #a66b38)}
-#player.form-ice{filter:drop-shadow(0 0 7px #a5f4ff)}
-#player.form-lightning{filter:drop-shadow(0 0 7px #fff36a)}
-#message{min-height:24px;color:#d8ffd2;margin:8px}
-#actions{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:10px}
-.action{background:#344f3a;color:white;border:1px solid #82bd85}
-#mobile-controls{display:grid;grid-template-columns:repeat(3,56px);grid-template-rows:repeat(2,48px);gap:5px;justify-content:center;margin:12px auto;touch-action:none}
-.move{background:#365c3d;color:white;font-size:20px;border:1px solid #9bd39b;user-select:none;touch-action:none}
-.up{grid-column:2;grid-row:1}.left{grid-column:1;grid-row:2}.down{grid-column:2;grid-row:2}.right{grid-column:3;grid-row:2}
-@media(max-width:500px){#game{height:60vh;min-height:340px}.lake{width:115px;height:72px}.tree{font-size:34px;width:42px}}
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    background: #17251c;
+    color: white;
+    font-family: Arial, sans-serif;
+    text-align: center;
+}
+
+h1 {
+    margin: 12px 0;
+    color: #9cff80;
+    text-shadow: 2px 2px #23472b;
+}
+
+#menu { padding: 16px; }
+
+#classes {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 10px;
+    max-width: 900px;
+    margin: 15px auto;
+}
+
+.class-card {
+    background: #263d2d;
+    border: 2px solid #4f8156;
+    color: white;
+    padding: 12px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.class-card:hover {
+    background: #3b6043;
+    border-color: #a5ff91;
+}
+
+.class-card strong {
+    display: block;
+    margin-bottom: 6px;
+}
+
+.class-card small { color: #d0e8d3; }
+
+button {
+    cursor: pointer;
+    border: 0;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-weight: bold;
+}
+
+#start {
+    background: #9cff80;
+    color: #17321b;
+    font-size: 16px;
+    margin: 10px;
+}
+
+#start:disabled { opacity: 0.5; cursor: not-allowed; }
+
+#game-wrap {
+    display: none;
+    padding: 8px;
+}
+
+#hud {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 8px auto;
+    max-width: 900px;
+}
+
+.hud-box {
+    background: #263d2d;
+    border: 1px solid #6d9b71;
+    border-radius: 8px;
+    padding: 8px 12px;
+}
+
+#game {
+    position: relative;
+    width: min(900px, 96vw);
+    height: min(540px, 62vh);
+    min-height: 360px;
+    margin: 0 auto;
+    overflow: hidden;
+    border: 4px solid #6a482c;
+    border-radius: 8px;
+    background:
+        radial-gradient(ellipse at 20% 20%, #5da64c 0 4%, transparent 5%),
+        radial-gradient(ellipse at 70% 60%, #4c9845 0 5%, transparent 6%),
+        #4e9b43;
+    touch-action: none;
+}
+
+.path {
+    position: absolute;
+    left: 0;
+    top: 68%;
+    width: 100%;
+    height: 70px;
+    background: #b79a63;
+    border-top: 5px solid #8f7549;
+    border-bottom: 5px solid #8f7549;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.lake {
+    position: absolute;
+    width: 155px;
+    height: 95px;
+    right: 8%;
+    top: 12%;
+    border-radius: 50%;
+    background: #3da9e8;
+    border: 6px solid #83d8f4;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.tree {
+    position: absolute;
+    width: 50px;
+    height: 58px;
+    font-size: 40px;
+    line-height: 50px;
+    text-align: center;
+    z-index: 4;
+    user-select: none;
+    pointer-events: none;
+}
+
+.t1 { left: 15%; top: 15%; }
+.t2 { left: 35%; top: 38%; }
+.t3 { left: 70%; top: 43%; }
+.t4 { left: 48%; top: 12%; }
+.t5 { left: 12%; top: 76%; }
+.t6 { left: 82%; top: 77%; }
+
+/* PEDRAS ARREDONDADAS */
+.rock {
+    position: absolute;
+    width: 35px;
+    height: 27px;
+    z-index: 4;
+    pointer-events: none;
+    background: linear-gradient(
+        145deg,
+        #c7c7bd,
+        #85877f 60%,
+        #55584f
+    );
+    border: 2px solid #686a62;
+    border-radius: 45% 55% 38% 42%;
+    box-shadow: inset -4px -3px 0 #6b6d65;
+    transform: rotate(-12deg);
+}
+
+.rock::after {
+    content: "";
+    position: absolute;
+    width: 12px;
+    height: 7px;
+    top: 5px;
+    left: 6px;
+    background: #deded5;
+    border-radius: 50%;
+    transform: rotate(-20deg);
+}
+
+.r1 { left: 56%; top: 53%; }
+.r2 { left: 28%; top: 76%; }
+
+/* MOEDAS ESPALHADAS PELO MAPA */
+
+.coin {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    background: radial-gradient(circle at 30% 30%, #fff176, #ffc107 60%, #d99000);
+    border: 3px solid #ffe082;
+    border-radius: 50%;
+    box-shadow: 0 0 8px #ffd54f;
+    box-sizing: border-box;
+    z-index: 5;
+}
+
+.coin::after {
+    content: "$";
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #9b6500;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+@keyframes coinFloat {
+    from { transform: translateY(0); }
+    to { transform: translateY(-5px); }
+}
+
+.element {
+    position: absolute;
+    z-index: 2;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 23px;
+    border: 2px solid white;
+    cursor: pointer;
+}
+
+.fire { left: 25%; top: 20%; background: #ed582e; }
+.water { left: 60%; top: 23%; background: #248bea; }
+.earth { left: 43%; top: 78%; background: #85512b; }
+.ice { left: 76%; top: 27%; background: #70e6ff; }
+.lightning { left: 53%; top: 35%; background: #e7c72c; }
+
+#player {
+    position: absolute;
+    width: 30px;
+    height: 34px;
+    left: 50%;
+    top: 58%;
+    transform: translate(-50%, -50%);
+    background: #168cff;
+    border: 3px solid #d7f0ff;
+    border-radius: 6px;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 21px;
+    user-select: none;
+    pointer-events: none;
+}
+
+#player.metamorpho {
+    background: transparent !important;
+    border: 0 !important;
+    font-size: 30px;
+}
+
+#player.form-fire { filter: drop-shadow(0 0 7px #ff5b21); }
+#player.form-water { filter: drop-shadow(0 0 7px #35caff); }
+#player.form-earth { filter: drop-shadow(0 0 7px #a66b38); }
+#player.form-ice { filter: drop-shadow(0 0 7px #a5f4ff); }
+#player.form-lightning { filter: drop-shadow(0 0 7px #fff36a); }
+
+#message {
+    min-height: 24px;
+    color: #d8ffd2;
+    margin: 8px;
+}
+
+#actions {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin: 10px;
+}
+
+.action {
+    background: #344f3a;
+    color: white;
+    border: 1px solid #82bd85;
+}
+
+#mobile-controls {
+    display: grid;
+    grid-template-columns: repeat(3, 56px);
+    grid-template-rows: repeat(2, 48px);
+    gap: 5px;
+    justify-content: center;
+    margin: 12px auto;
+    touch-action: none;
+}
+
+.move {
+    background: #365c3d;
+    color: white;
+    font-size: 20px;
+    border: 1px solid #9bd39b;
+    user-select: none;
+    touch-action: none;
+}
+
+.up { grid-column: 2; grid-row: 1; }
+.left { grid-column: 1; grid-row: 2; }
+.down { grid-column: 2; grid-row: 2; }
+.right { grid-column: 3; grid-row: 2; }
+
+#back {
+    background: #9cff80;
+    color: #17321b;
+    margin: 8px;
+}
 </style>
 </head>
+
 <body>
 <h1>🌲 Pixel Adventure 🌲</h1>
+
 <section id="menu">
-  <h2>Escolha sua classe</h2>
-  <p>Selecione uma classe para começar sua aventura.</p>
-  <div id="classes"></div>
-  <p id="class-info">Clique em uma classe para ver os detalhes.</p>
-  <button id="start" disabled>Começar aventura</button>
+    <h2>Escolha sua classe</h2>
+    <p>Selecione uma classe para começar sua aventura.</p>
+    <div id="classes"></div>
+    <p id="class-info">Clique em uma classe para ver os detalhes.</p>
+    <button id="start" disabled>Começar aventura</button>
 </section>
+
 <section id="game-wrap">
-  <div id="hud">
-    <div class="hud-box">🛡️ <span id="class-name">Aventureiro</span></div>
-    <div class="hud-box">❤️ HP: <span id="hp">100</span>/100</div>
-    <div class="hud-box">🔵 Mana: <span id="mana">100</span>/100</div>
-    <div class="hud-box">🪙 Moedas: <span id="coins">0</span></div>
-    <div class="hud-box">✨ Forma: <span id="form">Normal</span></div>
-  </div>
-  <div id="game">
-    <div class="path"></div><div class="lake"></div>
-    <div class="tree t1 obstacle">🌳</div><div class="tree t2 obstacle">🌳</div><div class="tree t3 obstacle">🌳</div>
-    <div class="tree t4 obstacle">🌳</div><div class="tree t5 obstacle">🌳</div><div class="tree t6 obstacle">🌳</div>
-    <div class="rock r1 obstacle"></div><div class="rock r2 obstacle"></div>
-    <div class="coin" style="left:18%;top:48%"></div>
-    <div class="coin" style="left:42%;top:58%"></div>
-    <div class="coin" style="left:78%;top:58%"></div>
-    <div class="coin" style="left:61%;top:82%"></div>
-    <div class="coin" style="left:8%;top:35%"></div>
-    <div class="element fire" data-element="fire" title="Fogo">🔥</div>
-    <div class="element water" data-element="water" title="Água">💧</div>
-    <div class="element earth" data-element="earth" title="Terra">🌱</div>
-    <div class="element ice" data-element="ice" title="Gelo">❄️</div>
-    <div class="element lightning" data-element="lightning" title="Raio">⚡</div>
-    <div id="player" aria-label="Jogador"><canvas id="spriteCanvas" width="16" height="20"></canvas></div>
-  </div>
-  <div id="message">Use WASD ou as setas para andar.</div>
-  <div id="actions">
-    <button class="action" data-skill="1">Habilidade 1</button>
-    <button class="action" data-skill="2">Habilidade 2</button>
-    <button class="action" data-skill="3">Habilidade 3</button>
-    <button class="action" id="collect">🪙 Coletar moeda</button>
-  </div>
-  <div id="mobile-controls">
-    <button class="move up" data-dir="up">▲</button><button class="move left" data-dir="left">◀</button>
-    <button class="move down" data-dir="down">▼</button><button class="move right" data-dir="right">▶</button>
-  </div>
-  <button id="back">Voltar à seleção de classe</button>
+    <div id="hud">
+        <div class="hud-box">🛡️ <span id="class-name">Aventureiro</span></div>
+        <div class="hud-box">❤️ HP: <span id="hp">100</span>/100</div>
+        <div class="hud-box">🔵 Mana: <span id="mana">100</span>/100</div>
+        <div class="hud-box">🪙 Moedas: <span id="coins">0</span></div>
+        <div class="hud-box">✨ Forma: <span id="form">Normal</span></div>
+    </div>
+
+    <div id="game">
+        <div class="path"></div>
+        <div class="lake"></div>
+
+        <div class="tree t1 obstacle">🌳</div>
+        <div class="tree t2 obstacle">🌳</div>
+        <div class="tree t3 obstacle">🌳</div>
+        <div class="tree t4 obstacle">🌳</div>
+        <div class="tree t5 obstacle">🌳</div>
+        <div class="tree t6 obstacle">🌳</div>
+
+        <div class="rock r1 obstacle"></div>
+        <div class="rock r2 obstacle"></div>
+
+        <div class="coin" style="left:18%;top:48%">🪙</div>
+        <div class="coin" style="left:42%;top:58%">🪙</div>
+        <div class="coin" style="left:78%;top:58%">🪙</div>
+        <div class="coin" style="left:61%;top:82%">🪙</div>
+        <div class="coin" style="left:8%;top:35%">🪙</div>
+
+        <div class="element fire" data-element="fire" title="Fogo">🔥</div>
+        <div class="element water" data-element="water" title="Água">💧</div>
+        <div class="element earth" data-element="earth" title="Terra">🌱</div>
+        <div class="element ice" data-element="ice" title="Gelo">❄️</div>
+        <div class="element lightning" data-element="lightning" title="Raio">⚡</div>
+
+        <div id="player" aria-label="Jogador"></div>
+    </div>
+
+    <div id="message">Use WASD ou as setas para andar.</div>
+
+    <div id="actions">
+        <button class="action" data-skill="1">Habilidade 1</button>
+        <button class="action" data-skill="2">Habilidade 2</button>
+        <button class="action" data-skill="3">Habilidade 3</button>
+        <button class="action" id="collect">🪙 Coletar moeda</button>
+    </div>
+
+    <div id="mobile-controls">
+        <button class="move up" data-dir="up">▲</button>
+        <button class="move left" data-dir="left">◀</button>
+        <button class="move down" data-dir="down">▼</button>
+        <button class="move right" data-dir="right">▶</button>
+    </div>
+
+    <button id="back">Voltar à seleção de classe</button>
 </section>
+
 <script>
-const classData=[
-{name:"Guerreiro",icon:"⚔️",description:"Combatente equilibrado, especialista em ataques físicos.",skills:["Golpe forte","Defesa de ferro","Corte poderoso"]},
-{name:"Mago",icon:"🧙",description:"Controla energias mágicas e ataca à distância.",skills:["Bola mágica","Escudo arcano","Explosão arcana"]},
-{name:"Ninja",icon:"🥷",description:"Rápido e furtivo, especialista em movimentos ágeis.",skills:["Corte veloz","Passo das sombras","Ataque surpresa"]},
-{name:"Arqueiro",icon:"🏹",description:"Ataca de longe com precisão.",skills:["Flecha rápida","Disparo triplo","Chuva de flechas"]},
-{name:"Paladino",icon:"🛡️",description:"Guerreiro que combina proteção e energia sagrada.",skills:["Golpe sagrado","Barreira divina","Luz purificadora"]},
-{name:"Assassino",icon:"🗡️",description:"Especialista em ataques rápidos e estratégicos.",skills:["Lâmina veloz","Desaparecer","Ataque preciso"]},
-{name:"Cavaleiro das Trevas",icon:"🌑",description:"Usa poderes sombrios em combate.",skills:["Corte sombrio","Armadura negra","Eclipse"]},
-{name:"Invocador",icon:"🔮",description:"Canaliza energia para invocar forças místicas.",skills:["Espírito guardião","Selo místico","Invocação maior"]},
-{name:"Berserker",icon:"🪓",description:"Lutador agressivo que aposta na força bruta.",skills:["Golpe brutal","Fúria","Impacto devastador"]},
-{name:"Druida",icon:"🍃",description:"Conecta-se à natureza e às suas energias.",skills:["Raízes","Cura natural","Tempestade verde"]},
-{name:"Monge",icon:"🥋",description:"Combina disciplina, velocidade e energia interior.",skills:["Punho firme","Concentração","Onda espiritual"]},
-{name:"Metamorfo Elemental",icon:"🌈",description:"Transforma-se ao entrar em contato com elementos.",skills:["Pulso elemental","Mudança de forma","Explosão elemental"]}
+const classData = [
+    {name:"Guerreiro",icon:"⚔️",description:"Combatente equilibrado, especialista em ataques físicos.",skills:["Golpe forte","Defesa de ferro","Corte poderoso"]},
+    {name:"Mago",icon:"🧙",description:"Controla energias mágicas e ataca à distância.",skills:["Bola mágica","Escudo arcano","Explosão arcana"]},
+    {name:"Ninja",icon:"🥷",description:"Rápido e furtivo, especialista em movimentos ágeis.",skills:["Corte veloz","Passo das sombras","Ataque surpresa"]},
+    {name:"Arqueiro",icon:"🏹",description:"Ataca de longe com precisão.",skills:["Flecha rápida","Disparo triplo","Chuva de flechas"]},
+    {name:"Paladino",icon:"🛡️",description:"Guerreiro que combina proteção e energia sagrada.",skills:["Golpe sagrado","Barreira divina","Luz purificadora"]},
+    {name:"Assassino",icon:"🗡️",description:"Especialista em ataques rápidos e estratégicos.",skills:["Lâmina veloz","Desaparecer","Ataque preciso"]},
+    {name:"Cavaleiro das Trevas",icon:"🌑",description:"Usa poderes sombrios em combate.",skills:["Corte sombrio","Armadura negra","Eclipse"]},
+    {name:"Invocador",icon:"🔮",description:"Canaliza energia para invocar forças místicas.",skills:["Espírito guardião","Selo místico","Invocação maior"]},
+    {name:"Berserker",icon:"🪓",description:"Lutador agressivo que aposta na força bruta.",skills:["Golpe brutal","Fúria","Impacto devastador"]},
+    {name:"Druida",icon:"🍃",description:"Conecta-se à natureza e às suas energias.",skills:["Raízes","Cura natural","Tempestade verde"]},
+    {name:"Monge",icon:"🥋",description:"Combina disciplina, velocidade e energia interior.",skills:["Punho firme","Concentração","Onda espiritual"]},
+    {name:"Metamorfo Elemental",icon:"🌈",description:"Transforma-se ao entrar em contato com elementos.",skills:["Pulso elemental","Mudança de forma","Explosão elemental"]}
 ];
-const menu=document.getElementById("menu"),gameWrap=document.getElementById("game-wrap"),game=document.getElementById("game");
-const player=document.getElementById("player"),canvas=document.getElementById("spriteCanvas"),ctx=canvas.getContext("2d");
-const classContainer=document.getElementById("classes"),classInfo=document.getElementById("class-info"),startButton=document.getElementById("start"),message=document.getElementById("message");
-let selectedClass=null,coins=0,hp=100,mana=100,x=0,y=0,currentForm="",movementKeys=new Set(),lastMoveTime=0;
-let direction="down",walkFrame=0,stepCounter=0;
-const speed=3,playerWidth=32,playerHeight=40;
-const elementInfo={fire:{name:"Fogo",emoji:"🔥"},water:{name:"Água",emoji:"💧"},earth:{name:"Terra",emoji:"🌱"},ice:{name:"Gelo",emoji:"❄️"},lightning:{name:"Raio",emoji:"⚡"}};
-const palettes={
-"Guerreiro":{hair:"#55351f",skin:"#f0bd8b",shirt:"#3478d4",pants:"#293c59",accent:"#d9e5f3"},
-"Mago":{hair:"#35265b",skin:"#f0bd8b",shirt:"#7046b8",pants:"#35265b",accent:"#f2dbff"},
-"Ninja":{hair:"#1d1b24",skin:"#d99d73",shirt:"#34333c",pants:"#171820",accent:"#d34a4a"},
-"Arqueiro":{hair:"#75421f",skin:"#f0bd8b",shirt:"#52834a",pants:"#55412b",accent:"#d7c58b"},
-"Paladino":{hair:"#d7b95e",skin:"#f0bd8b",shirt:"#e0e3e8",pants:"#6c7483",accent:"#f1c84b"},
-"Assassino":{hair:"#29222d",skin:"#d99d73",shirt:"#592d65",pants:"#201d29",accent:"#b5a4c4"},
-"Cavaleiro das Trevas":{hair:"#191923",skin:"#d99d73",shirt:"#41404b",pants:"#171720",accent:"#a14baf"},
-"Invocador":{hair:"#a56bdf",skin:"#f0bd8b",shirt:"#3956a5",pants:"#28335f",accent:"#7be7ee"},
-"Berserker":{hair:"#b84d2c",skin:"#e6a779",shirt:"#a93d31",pants:"#49312d",accent:"#e9b64d"},
-"Druida":{hair:"#6b4326",skin:"#f0bd8b",shirt:"#49854c",pants:"#3c5d38",accent:"#b3e57c"},
-"Monge":{hair:"#35251b",skin:"#d99d73",shirt:"#c17a38",pants:"#8d4c2c",accent:"#f1d2a2"},
-"Metamorfo Elemental":{hair:"#f2f2f2",skin:"#f0bd8b",shirt:"#39a9a1",pants:"#285d72",accent:"#fff36a"}
+
+const menu = document.getElementById("menu");
+const gameWrap = document.getElementById("game-wrap");
+const game = document.getElementById("game");
+const player = document.getElementById("player");
+const classContainer = document.getElementById("classes");
+const classInfo = document.getElementById("class-info");
+const startButton = document.getElementById("start");
+const message = document.getElementById("message");
+
+let selectedClass = null;
+let coins = 0;
+let hp = 100;
+let mana = 100;
+let x = 0;
+let y = 0;
+let currentForm = "";
+let movementKeys = new Set();
+let lastMoveTime = 0;
+
+const speed = 3;
+const playerWidth = 30;
+const playerHeight = 34;
+
+const elementInfo = {
+    fire: {name:"Fogo",emoji:"🔥"},
+    water: {name:"Água",emoji:"💧"},
+    earth: {name:"Terra",emoji:"🌱"},
+    ice: {name:"Gelo",emoji:"❄️"},
+    lightning: {name:"Raio",emoji:"⚡"}
 };
-function showMessage(text){message.textContent=text}
-function drawCharacter(){
-  const p=palettes[selectedClass?.name]||palettes["Guerreiro"];
-  ctx.clearRect(0,0,16,20);
-  const put=(x,y,w,h,c)=>{ctx.fillStyle=c;ctx.fillRect(x,y,w,h)};
-  const elemental={fire:"#ff6338",water:"#40c9ff",earth:"#9a693f",ice:"#baf7ff",lightning:"#fff36a"};
-  const shirt=currentForm?elemental[currentForm]:p.shirt;
-  const accent=currentForm?elemental[currentForm]:p.accent;
-  put(3,18,10,1,"#21402a");
-  if(direction==="up"){
-    put(4,2,8,6,p.hair);put(3,4,2,4,p.hair);put(11,4,2,4,p.hair);
-  }else{
-    put(4,1,8,3,p.hair);put(3,3,2,4,p.hair);put(11,3,2,4,p.hair);
-    put(4,3,8,5,p.skin);
-    if(direction==="down"){put(5,5,2,1,"#242424");put(9,5,2,1,"#242424");put(7,7,2,1,"#a95f52")}
-    if(direction==="left"){put(4,5,1,1,"#242424");put(4,7,2,1,"#a95f52")}
-    if(direction==="right"){put(11,5,1,1,"#242424");put(10,7,2,1,"#a95f52")}
-  }
-  put(7,8,2,2,p.skin);
-  put(3,9,3,5,shirt);put(10,9,3,5,shirt);put(5,9,6,6,shirt);
-  put(5,15,2,3,p.pants);put(9,15,2,3,p.pants);
-  if(walkFrame){put(4,17,4,2,p.pants);put(9,16,3,2,p.pants)}
-  else{put(4,17,3,2,p.pants);put(9,17,3,2,p.pants)}
-  put(3,18,4,2,"#30251e");put(9,18,4,2,"#30251e");
-  put(5,14,6,1,accent);put(7,10,2,2,accent);
-  if(selectedClass?.name==="Arqueiro"){put(direction==="left"?2:12,10,2,7,"#b88743")}
-  if(selectedClass?.name==="Guerreiro"||selectedClass?.name==="Paladino"){put(13,10,2,5,"#dce5ed")}
-  if(selectedClass?.name==="Mago"||selectedClass?.name==="Invocador"){put(6,0,4,1,accent)}
-  if(currentForm){put(2,2,2,2,accent);put(12,2,2,2,accent)}
-}
-classData.forEach(item=>{
- const card=document.createElement("button");card.className="class-card";
- card.innerHTML=`<strong>${item.icon} ${item.name}</strong><small>${item.description}</small>`;
- card.addEventListener("click",()=>{
-  selectedClass=item;
-  document.querySelectorAll(".class-card").forEach(el=>el.style.borderColor="#4f8156");
-  card.style.borderColor="#d4ff80";
-  classInfo.textContent=item.name+": "+item.description+" Habilidades: "+item.skills.join(", ")+".";
-  startButton.disabled=false;
- });classContainer.appendChild(card);
+
+classData.forEach(item => {
+    const card = document.createElement("button");
+    card.className = "class-card";
+    card.innerHTML = <strong>${item.icon} ${item.name}</strong><small>${item.description}</small>;
+
+    card.addEventListener("click", () => {
+        selectedClass = item;
+        document.querySelectorAll(".class-card").forEach(el => {
+            el.style.borderColor = "#4f8156";
+        });
+        card.style.borderColor = "#d4ff80";
+        classInfo.textContent = item.name + ": " + item.description +
+            " Habilidades: " + item.skills.join(", ") + ".";
+        startButton.disabled = false;
+    });
+
+    classContainer.appendChild(card);
 });
-function updateHUD(){
- document.getElementById("hp").textContent=hp;document.getElementById("mana").textContent=mana;
- document.getElementById("coins").textContent=coins;
- document.getElementById("form").textContent=currentForm?elementInfo[currentForm].name:"Normal";
+
+function showMessage(text) {
+    message.textContent = text;
 }
-function setPlayerPosition(){player.style.left=x+"px";player.style.top=y+"px";player.style.transform="none"}
-function overlaps(a,b){return a.left<b.right&&a.right>b.left&&a.top<b.bottom&&a.bottom>b.top}
-function blocked(nextX,nextY){
- const p={left:nextX+3,top:nextY+3,right:nextX+playerWidth-3,bottom:nextY+playerHeight-2};
- for(const obj of game.querySelectorAll(".obstacle")){
-  const left=obj.offsetLeft,top=obj.offsetTop;let r;
-  if(obj.classList.contains("tree"))r={left:left+7,top:top+25,right:left+obj.offsetWidth-7,bottom:top+obj.offsetHeight};
-  else if(obj.classList.contains("rock"))r={left:left+3,top:top+3,right:left+obj.offsetWidth-3,bottom:top+obj.offsetHeight-2};
-  else continue;
-  if(overlaps(p,r))return true;
- }
- return false;
+
+function updateHUD() {
+    document.getElementById("hp").textContent = hp;
+    document.getElementById("mana").textContent = mana;
+    document.getElementById("coins").textContent = coins;
+    document.getElementById("form").textContent =
+        currentForm ? elementInfo[currentForm].name : "Normal";
 }
-function updateTransformation(){
- if(!selectedClass||selectedClass.name!=="Metamorfo Elemental")return;
- const p={left:x,top:y,right:x+playerWidth,bottom:y+playerHeight};
- let found="";
- for(const el of game.querySelectorAll(".element")){
-  const r={left:el.offsetLeft,top:el.offsetTop,right:el.offsetLeft+el.offsetWidth,bottom:el.offsetTop+el.offsetHeight};
-  if(overlaps(p,r)){found=el.dataset.element;break}
- }
- if(found!==currentForm){
-  currentForm=found;
-  player.className=found?"form-"+found:"";
-  drawCharacter();updateHUD();
-  if(found)showMessage("Você se transformou em "+elementInfo[found].name+"!");
-  else showMessage("Você voltou à forma normal.");
- }
+
+function setPlayerPosition() {
+    player.style.left = x + "px";
+    player.style.top = y + "px";
+    player.style.transform = "none";
 }
-function collectCoins(){
- const p={left:x+2,top:y+2,right:x+playerWidth-2,bottom:y+playerHeight-2};
- document.querySelectorAll("#game .coin").forEach(coin=>{
-  const r={left:coin.offsetLeft,top:coin.offsetTop,right:coin.offsetLeft+coin.offsetWidth,bottom:coin.offsetTop+coin.offsetHeight};
-  if(overlaps(p,r)){coin.remove();coins++;updateHUD();showMessage("🪙 Você coletou uma moeda!")}
- });
+
+function overlaps(a, b) {
+    return a.left < b.right &&
+           a.right > b.left &&
+           a.top < b.bottom &&
+           a.bottom > b.top;
 }
-function move(dx,dy){
- if(!selectedClass||gameWrap.style.display==="none")return;
- if(dx<0)direction="left";else if(dx>0)direction="right";else if(dy<0)direction="up";else if(dy>0)direction="down";
- const maxX=game.clientWidth-playerWidth,maxY=game.clientHeight-playerHeight;
- const nextX=Math.max(0,Math.min(maxX,x+dx)),nextY=Math.max(0,Math.min(maxY,y+dy));
- if(!blocked(nextX,y))x=nextX;if(!blocked(x,nextY))y=nextY;
- stepCounter++;if(stepCounter%6===0)walkFrame=1-walkFrame;
- setPlayerPosition();drawCharacter();updateTransformation();collectCoins();
+
+/* Colisão com árvores e pedras */
+function blocked(nextX, nextY) {
+    const p = {
+        left: nextX + 3,
+        top: nextY + 3,
+        right: nextX + playerWidth - 3,
+        bottom: nextY + playerHeight - 2
+    };
+
+    for (const obj of game.querySelectorAll(".obstacle")) {
+        const left = obj.offsetLeft;
+        const top = obj.offsetTop;
+        let r;
+
+        if (obj.classList.contains("tree")) {
+            r = {
+                left: left + 7,
+                top: top + 25,
+                right: left + obj.offsetWidth - 7,
+                bottom: top + obj.offsetHeight
+            };
+        } else if (obj.classList.contains("rock")) {
+            r = {
+                left: left + 3,
+                top: top + 3,
+                right: left + obj.offsetWidth - 3,
+                bottom: top + obj.offsetHeight - 2
+            };
+        } else {
+            continue;
+        }
+
+        if (overlaps(p, r)) return true;
+    }
+
+    return false;
 }
-function startGame(){
- if(!selectedClass)return;
- menu.style.display="none";gameWrap.style.display="block";
- document.getElementById("class-name").textContent=selectedClass.name;
- x=(game.clientWidth-playerWidth)/2;y=(game.clientHeight-playerHeight)/2;
- direction="down";walkFrame=0;currentForm="";player.className="";
- coins=0;hp=100;mana=100;
- const coinPositions=[["18%","48%"],["42%","58%"],["78%","58%"],["61%","82%"],["8%","35%"]];
- if(game.querySelectorAll(".coin").length===0)coinPositions.forEach(pos=>{const c=document.createElement("div");c.className="coin";c.style.left=pos[0];c.style.top=pos[1];game.appendChild(c)});
- setPlayerPosition();drawCharacter();updateHUD();
- showMessage("A aventura começou! Explore o mapa e colete as moedas.");
+
+/* Transformação do Metamorfo Elemental */
+function updateTransformation() {
+    if (!selectedClass || selectedClass.name !== "Metamorfo Elemental") return;
+
+    const p = {
+        left: x,
+        top: y,
+        right: x + playerWidth,
+        bottom: y + playerHeight
+    };
+
+    for (const el of game.querySelectorAll(".element")) {
+        const r = {
+            left: el.offsetLeft,
+            top: el.offsetTop,
+            right: el.offsetLeft + el.offsetWidth,
+            bottom: el.offsetTop + el.offsetHeight
+        };
+
+        if (overlaps(p, r)) {
+            const element = el.dataset.element;
+
+            if (element !== currentForm) {
+                currentForm = element;
+                player.className = "metamorpho form-" + element;
+                player.textContent = elementInfo[element].emoji;
+                showMessage("Você se transformou em " + elementInfo[element].name + "!");
+                updateHUD();
+            }
+            return;
+        }
+    }
 }
-startButton.addEventListener("click",startGame);
-document.getElementById("back").addEventListener("click",()=>{gameWrap.style.display="none";menu.style.display="block";movementKeys.clear()});
-document.addEventListener("keydown",event=>{
- const key=event.key.toLowerCase(),valid=["arrowup","arrowdown","arrowleft","arrowright","w","a","s","d"];
- if(valid.includes(key)){event.preventDefault();movementKeys.add(key)}
+
+/* Coleta automática ao encostar nas moedas */
+function collectCoins() {
+    const p = {
+        left: x,
+        top: y,
+        right: x + playerWidth,
+        bottom: y + playerHeight
+    };
+
+    document.querySelectorAll("#game .coin").forEach(coin => {
+        const r = {
+            left: coin.offsetLeft,
+            top: coin.offsetTop,
+            right: coin.offsetLeft + coin.offsetWidth,
+            bottom: coin.offsetTop + coin.offsetHeight
+        };
+
+        if (overlaps(p, r)) {
+            coin.remove();
+            coins++;
+            updateHUD();
+            showMessage("🪙 Você coletou uma moeda!");
+        }
+    });
+}
+
+function move(dx, dy) {
+    if (!selectedClass || gameWrap.style.display === "none") return;
+
+    const maxX = game.clientWidth - playerWidth;
+    const maxY = game.clientHeight - playerHeight;
+    const nextX = Math.max(0, Math.min(maxX, x + dx));
+    const nextY = Math.max(0, Math.min(maxY, y + dy));
+
+    if (!blocked(nextX, y)) x = nextX;
+    if (!blocked(x, nextY)) y = nextY;
+
+    setPlayerPosition();
+    updateTransformation();
+    collectCoins();
+}
+
+function startGame() {
+    if (!selectedClass) return;
+
+    menu.style.display = "none";
+    gameWrap.style.display = "block";
+
+    document.getElementById("class-name").textContent = selectedClass.name;
+
+    x = (game.clientWidth - playerWidth) / 2;
+    y = (game.clientHeight - playerHeight) / 2;
+
+    player.className = "";
+    player.textContent = selectedClass.icon;
+    player.style.background = "#168cff";
+    player.style.border = "3px solid #d7f0ff";
+
+    if (selectedClass.name === "Metamorfo Elemental") {
+        player.classList.add("metamorpho");
+    }
+
+    currentForm = "";
+    coins = 0;
+    hp = 100;
+    mana = 100;
+
+    setPlayerPosition();
+    updateHUD();
+    showMessage("A aventura começou! Explore o mapa e colete as moedas.");
+}
+
+startButton.addEventListener("click", startGame);
+
+document.getElementById("back").addEventListener("click", () => {
+    gameWrap.style.display = "none";
+    menu.style.display = "block";
+    movementKeys.clear();
 });
-document.addEventListener("keyup",event=>movementKeys.delete(event.key.toLowerCase()));
-window.addEventListener("blur",()=>movementKeys.clear());
-function movementLoop(timestamp){
- if(timestamp-lastMoveTime>=16){
-  let dx=0,dy=0;
-  if(movementKeys.has("arrowup")||movementKeys.has("w"))dy-=speed;
-  if(movementKeys.has("arrowdown")||movementKeys.has("s"))dy+=speed;
-  if(movementKeys.has("arrowleft")||movementKeys.has("a"))dx-=speed;
-  if(movementKeys.has("arrowright")||movementKeys.has("d"))dx+=speed;
-  if(dx&&dy){dx*=Math.SQRT1_2;dy*=Math.SQRT1_2}
-  if(dx||dy)move(dx,dy);
-  lastMoveTime=timestamp;
- }
- requestAnimationFrame(movementLoop);
+
+document.addEventListener("keydown", event => {
+    const key = event.key.toLowerCase();
+    const valid = ["arrowup","arrowdown","arrowleft","arrowright","w","a","s","d"];
+
+    if (valid.includes(key)) {
+        event.preventDefault();
+        movementKeys.add(key);
+    }
+});
+
+document.addEventListener("keyup", event => {
+    movementKeys.delete(event.key.toLowerCase());
+});
+
+window.addEventListener("blur", () => movementKeys.clear());
+
+function movementLoop(timestamp) {
+    if (timestamp - lastMoveTime >= 16) {
+        let dx = 0;
+        let dy = 0;
+
+        if (movementKeys.has("arrowup") || movementKeys.has("w")) dy -= speed;
+        if (movementKeys.has("arrowdown") || movementKeys.has("s")) dy += speed;
+        if (movementKeys.has("arrowleft") || movementKeys.has("a")) dx -= speed;
+        if (movementKeys.has("arrowright") || movementKeys.has("d")) dx += speed;
+
+        if (dx && dy) {
+            dx *= Math.SQRT1_2;
+            dy *= Math.SQRT1_2;
+        }
+
+        if (dx || dy) move(dx, dy);
+        lastMoveTime = timestamp;
+    }
+
+    requestAnimationFrame(movementLoop);
 }
+
 requestAnimationFrame(movementLoop);
-document.querySelectorAll(".move").forEach(button=>{
- const key={up:"arrowup",down:"arrowdown",left:"arrowleft",right:"arrowright"}[button.dataset.dir];
- button.addEventListener("pointerdown",event=>{event.preventDefault();button.setPointerCapture(event.pointerId);movementKeys.add(key)});
- const release=()=>movementKeys.delete(key);
- button.addEventListener("pointerup",release);button.addEventListener("pointercancel",release);button.addEventListener("lostpointercapture",release);
+
+/* Controles para celular */
+document.querySelectorAll(".move").forEach(button => {
+    const direction = button.dataset.dir;
+    const key = {
+        up: "arrowup",
+        down: "arrowdown",
+        left: "arrowleft",
+        right: "arrowright"
+    }[direction];
+
+    button.addEventListener("pointerdown", event => {
+        event.preventDefault();
+        button.setPointerCapture(event.pointerId);
+        movementKeys.add(key);
+    });
+
+    function release() {
+        movementKeys.delete(key);
+    }
+
+    button.addEventListener("pointerup", release);
+    button.addEventListener("pointercancel", release);
+    button.addEventListener("lostpointercapture", release);
 });
-document.getElementById("collect").addEventListener("click",()=>{coins++;updateHUD();showMessage("🪙 Você recebeu uma moeda!")});
-document.querySelectorAll("[data-skill]").forEach(button=>{
- button.addEventListener("click",()=>{
-  if(!selectedClass)return;
-  if(mana<10){showMessage("Mana insuficiente!");return}
-  mana-=10;updateHUD();
-  const skill=selectedClass.skills[Number(button.dataset.skill)-1];
-  showMessage(skill+" ativada! (Combate ainda não implementado.)");
- });
+
+/* Botão extra de moeda continua funcionando */
+document.getElementById("collect").addEventListener("click", () => {
+    coins++;
+    updateHUD();
+    showMessage("🪙 Você recebeu uma moeda!");
 });
-window.addEventListener("resize",()=>{
- if(gameWrap.style.display==="none")return;
- x=Math.max(0,Math.min(x,game.clientWidth-playerWidth));y=Math.max(0,Math.min(y,game.clientHeight-playerHeight));
- setPlayerPosition();drawCharacter();
+
+/* Habilidades demonstrativas */
+document.querySelectorAll("[data-skill]").forEach(button => {
+    button.addEventListener("click", () => {
+        if (!selectedClass) return;
+
+        if (mana < 10) {
+            showMessage("Mana insuficiente!");
+            return;
+        }
+
+        mana -= 10;
+        updateHUD();
+
+        const skill = selectedClass.skills[Number(button.dataset.skill) - 1];
+        showMessage(skill + " ativada! (Combate ainda não implementado.)");
+    });
+});
+
+window.addEventListener("resize", () => {
+    if (gameWrap.style.display === "none") return;
+
+    x = Math.max(0, Math.min(x, game.clientWidth - playerWidth));
+    y = Math.max(0, Math.min(y, game.clientHeight - playerHeight));
+    setPlayerPosition();
 });
 </script>
 </body>
 </html>
+
