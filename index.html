@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -438,7 +439,7 @@ const elementInfo = {
 classData.forEach(item => {
     const card = document.createElement("button");
     card.className = "class-card";
-    card.innerHTML = <strong>${item.icon} ${item.name}</strong><small>${item.description}</small>;
+    card.innerHTML = `<strong>${item.icon} ${item.name}</strong><small>${item.description}</small>`;
 
     card.addEventListener("click", () => {
         selectedClass = item;
@@ -731,4 +732,3 @@ window.addEventListener("resize", () => {
 </script>
 </body>
 </html>
-
